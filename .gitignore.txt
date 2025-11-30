@@ -1,0 +1,64 @@
+# ============================================
+# Xcode & Swift Project .gitignore (2025)
+# ============================================
+
+# Build artifacts
+build/
+DerivedData/
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+
+# SwiftData persistent stores (DO NOT COMMIT)
+*.swiftdata
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Xcode settings
+xcuserdata/
+*.xcworkspace
+*.xcuserstate
+*.moved-aside
+
+# Logs
+*.log
+
+# macOS Finder
+.DS_Store
+
+# Temporary files
+*.tmp
+*.swp
+*.lock
+
+# Archives
+*.xcarchive
+*.ipa
+*.dmg
+
+# Symbolication / debugging
+*.dSYM
+*.dSYM.zip
+
+# Swift playground files
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package build metadata
+.xcodeproj/project.xcworkspace/xcuserdata/
+.xcodeproj/xcuserdata/
+
+# SPM resolved file (optional)
+# Package.resolved
+
+# User schemes (optional)
+# **/*.xcscheme
+
+# CocoaPods (if you ever add it)
+Pods/
+
+# Carthage (rare)
+Carthage/
