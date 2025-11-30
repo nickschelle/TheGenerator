@@ -30,19 +30,24 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BFE25EFB2EDD0BF90031829C /* TheGenerator */ = {
+		BFE25EFB2EDD0BF90031829C /* 03 - Source */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TheGenerator;
+			path = "03 - Source";
 			sourceTree = "<group>";
 		};
-		BFE25F092EDD0BFA0031829C /* TheGeneratorTests */ = {
+		BFE25F092EDD0BFA0031829C /* 04 - Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TheGeneratorTests;
+			path = "04 - Tests";
 			sourceTree = "<group>";
 		};
-		BFE25F132EDD0BFA0031829C /* TheGeneratorUITests */ = {
+		BFE25F302EDD0CEC0031829C /* 02 - Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TheGeneratorUITests;
+			path = "02 - Resources";
+			sourceTree = "<group>";
+		};
+		BFE25F322EDD0CFE0031829C /* 01 - Documentaton */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "01 - Documentaton";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +80,10 @@
 		BFE25EF02EDD0BF90031829C = {
 			isa = PBXGroup;
 			children = (
-				BFE25EFB2EDD0BF90031829C /* TheGenerator */,
-				BFE25F092EDD0BFA0031829C /* TheGeneratorTests */,
-				BFE25F132EDD0BFA0031829C /* TheGeneratorUITests */,
+				BFE25F322EDD0CFE0031829C /* 01 - Documentaton */,
+				BFE25F302EDD0CEC0031829C /* 02 - Resources */,
+				BFE25EFB2EDD0BF90031829C /* 03 - Source */,
+				BFE25F092EDD0BFA0031829C /* 04 - Tests */,
 				BFE25EFA2EDD0BF90031829C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,7 +114,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BFE25EFB2EDD0BF90031829C /* TheGenerator */,
+				BFE25EFB2EDD0BF90031829C /* 03 - Source */,
+				BFE25F302EDD0CEC0031829C /* 02 - Resources */,
+				BFE25F322EDD0CFE0031829C /* 01 - Documentaton */,
 			);
 			name = TheGenerator;
 			packageProductDependencies = (
@@ -131,7 +139,7 @@
 				BFE25F082EDD0BFA0031829C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				BFE25F092EDD0BFA0031829C /* TheGeneratorTests */,
+				BFE25F092EDD0BFA0031829C /* 04 - Tests */,
 			);
 			name = TheGeneratorTests;
 			packageProductDependencies = (
@@ -152,9 +160,6 @@
 			);
 			dependencies = (
 				BFE25F122EDD0BFA0031829C /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				BFE25F132EDD0BFA0031829C /* TheGeneratorUITests */,
 			);
 			name = TheGeneratorUITests;
 			packageProductDependencies = (
