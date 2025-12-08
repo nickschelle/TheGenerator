@@ -1,5 +1,5 @@
 //
-//  IHAppSchemaV1+IHGroupPhraseLink.swift
+//  IGAppSchemaV1+IGGroupPhraseLink.swift
 //  TheGenerator
 //
 //  Created by Nick Schelle on 2025-12-07.
@@ -8,24 +8,24 @@
 import Foundation
 import SwiftData
 
-extension IHAppSchemaV1 {
+extension IGAppSchemaV1 {
     
     @Model
-    final class IHGroupPhraseLink {
+    final class IGGroupPhraseLink {
         
         var id: UUID = UUID()
         
         @Relationship(deleteRule: .nullify)
-        var group: IHGroup? = nil
+        var group: IGGroup? = nil
         
         @Relationship(deleteRule: .nullify)
-        var phrase: IHPhrase? = nil
+        var phrase: IGPhrase? = nil
         
         var sortOrder: Int = 0
         
         init(
-            group: IHGroup,
-            phrase: IHPhrase,
+            group: IGGroup,
+            phrase: IGPhrase,
             sortOrder: Int = 0,
             id: UUID = UUID()
         ) {

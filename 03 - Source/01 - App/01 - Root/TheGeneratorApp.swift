@@ -11,14 +11,13 @@ import SwiftData
 @main
 struct TheGeneratorApp: App {
     
+    @State private var app = IGAppModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [
-                    IHPhrase.self,
-                    IHGroup.self,
-                    IHGroupPhraseLink.self
-                ])
+                .modelContainer(app.container)
+                .environment(app)
         }
     }
 }

@@ -1,30 +1,51 @@
 //
-//  IHNormalization.swift
-//  IHeartEverything
+//  IGNormalizableString.swift
+//  TheGenerator
 //
-//  Created by Nick Schelle on 2025-11-20.
+//  Created by Nick Schelle on 2025-11-10.
 //
 
 import Foundation
+import SwiftData
 
-enum IHNormalization {
+protocol IGNormalizableString {
+    static var allowedSpecialCharacters: Set<Character> { get }
+    static var allowedHyphens: Set<Character> { get }
+    static var smallWords: Set<String> { get }
+    static func normalizeForSave(_ value: String) -> String
+    static func normalizeForInput(_ value: String) -> String
+}
 
-    // MARK: - Shared Allowed Characters
+extension IGNormalizableString {
     
-    static let allowedSpecialCharacters: Set<Character> = ["♥︎", "♥"]
+    static func normalizeForInput(_ string: String) -> String {
+        normalizeSegments(
+            string,
+            preserveTrailingSpace: true
+        )
+    }
+    
+    static func normalizeForSave(_ string: String) -> String {
+        normalizeSegments(
+            string,
+            preserveTrailingSpace: false
+        )
+    }
+    
+    static var allowedSpecialCharacters: Set<Character> { ["♥︎", "♥"] }
 
-    static let allowedHyphens: Set<Character> = [
-        "-",            // hyphen-minus
-        "‒",            // U+2012 figure dash
-        "‐",            // U+2010 hyphen
-        "-",            // U+2011 non-breaking hyphen
-        "–",            // en dash
-        "—"             // em dash
-    ]
+    static var allowedHyphens: Set<Character> { [
+        "-",     // U+002D hyphen-minus
+        "‐",     // U+2010 hyphen
+        "-",     // U+2011 non-breaking hyphen (this is different)
+        "‒",     // U+2012 figure dash
+        "–",     // U+2013 en dash
+        "—"      // U+2014 em dash
+    ] }
 
     // MARK: - Small Words for Group Title Case
 
-    static let smallWords: Set<String> = [
+    static var smallWords: Set<String> {[
         "a", "an", "the",
         "and", "but", "or", "nor", "for", "so", "yet",
         "as", "at", "by", "in", "of", "on", "per", "to",
@@ -33,50 +54,21 @@ enum IHNormalization {
         "than", "that", "once", "when",
         "like", "near", "over", "past",
         "with"
-    ]
-
-    // MARK: - Public Model-Specific APIs
-
-    /// Live updating inside a TextField
-    static func input(_ value: String) -> String {
-        normalizeSegments(
-            value,
-            preserveTrailingSpace: true,
-            lowerSmallWords: true
-        )
-    }
-
-    /// Final saved value
-    static func save(_ value: String) -> String {
-        normalizeSegments(
-            value,
-            preserveTrailingSpace: false,
-            lowerSmallWords: true
-        )
-    }
-
-    // MARK: - Core Segment-Based Normalizer
-
-    static func normalizeSegments(
-        _ value: String,
-        preserveTrailingSpace: Bool,
-        lowerSmallWords: Bool
+    ]}
+    
+    private static func normalizeSegments(
+        _ string: String,
+        preserveTrailingSpace: Bool
     ) -> String {
 
-        guard !value.isEmpty else { return value }
+        guard !string.isEmpty else { return string }
 
-        let hadTrailingSpace = value.last == " "
-
-        enum Segment: Equatable {
-            case word(String)
-            case space
-            case hyphen
-        }
+        let hadTrailingSpace = string.last == " "
 
         // --------------------------------------------
         // 1. Segment into words, spaces, and hyphens
         // --------------------------------------------
-        var segments: [Segment] = []
+        var segments: [IGNormalizationSegment] = []
         var currentWord = ""
 
         func flush() {
@@ -86,7 +78,7 @@ enum IHNormalization {
             }
         }
 
-        for ch in value {
+        for ch in string {
             if ch.isLetter || ch.isNumber || allowedSpecialCharacters.contains(ch) {
                 currentWord.append(ch)
             }
@@ -119,7 +111,7 @@ enum IHNormalization {
             word.range(of: "[A-Z]", options: .regularExpression) != nil
         }
 
-        var transformed: [Segment] = []
+        var transformed: [IGNormalizationSegment] = []
         var firstWordSeen = false
 
         for (index, seg) in segments.enumerated() {
@@ -131,7 +123,9 @@ enum IHNormalization {
                 firstWordSeen = true
 
                 // look at surrounding separators
-                let prev = segments[..<index].last { if case .word = $0 { return false } else { return true } }
+                let prev = segments[..<index].last(where: {
+                    if case .word = $0 { return false } else { return true }
+                })
                 let next = segments[(index+1)...].first { if case .word = $0 { return false } else { return true } }
 
                 let prevIsSpace = (prev == .space)
@@ -140,7 +134,6 @@ enum IHNormalization {
                 let lower = word.lowercased()
 
                 let shouldBeSmall =
-                    lowerSmallWords &&
                     !isFirstWord &&
                     prevIsSpace &&
                     nextIsSpace &&
@@ -201,3 +194,10 @@ enum IHNormalization {
         return result
     }
 }
+
+enum IGNormalizationSegment: Equatable {
+    case word(String)
+    case space
+    case hyphen
+}
+

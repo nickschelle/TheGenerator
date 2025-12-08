@@ -1,5 +1,5 @@
 //
-//  IHPhraseManager.swift
+//  IGPhraseManager.swift
 //  TheGenerator
 //
 //  Created by Nick Schelle on 2025-12-06.
@@ -8,17 +8,17 @@
 import Foundation
 import SwiftData
 
-enum IHPhraseManager {
+enum IGPhraseManager {
     
     @discardableResult
     static func newPhrase(
         _ rawValue: String,
         in context: ModelContext
-    ) throws -> IHPhrase {
+    ) throws -> IGPhrase {
         
-        let normalized = IHPhrase.normalize(rawValue)
+        let normalized = IGPhrase.normalizeForSave(rawValue)
         
-        let descriptor = FetchDescriptor<IHPhrase>(
+        let descriptor = FetchDescriptor<IGPhrase>(
             predicate: #Predicate { $0.value == normalized }
         )
 
@@ -26,14 +26,14 @@ enum IHPhraseManager {
             return existing
         }
 
-        let phrase = IHPhrase(normalized)
+        let phrase = IGPhrase(normalized)
         context.insert(phrase)
         return phrase
     }
     
     static func deletePhrases(
-        _ phrases: some Collection<IHPhrase>,
-        //with settings: IHAppSettings,
+        _ phrases: some Collection<IGPhrase>,
+        //with settings: IGAppSettings,
         in context: ModelContext
     ) throws {
         for phrase in phrases {
@@ -43,11 +43,11 @@ enum IHPhraseManager {
                 link.group?.touch()
             }
             /*
-            IHRecordManager.deleteRecords(phrase.records, with: settings, in: context)
+            IGRecordManager.deleteRecords(phrase.records, with: settings, in: context)
              */
             /*
             // Remove all tag links
-            IHTagManager.updateTags(to: [] as Set<IHTag>, for: phrase, in: context)
+            IGTagManager.updateTags(to: [] as Set<IGTag>, for: phrase, in: context)
              */
             // Delete phrase
             context.delete(phrase)

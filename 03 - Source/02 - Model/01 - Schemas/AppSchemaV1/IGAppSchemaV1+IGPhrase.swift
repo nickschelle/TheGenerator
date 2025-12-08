@@ -1,6 +1,6 @@
 //
-//  IHGroup.swift
-//  IHeartEverything
+//  IGAppSchemaV1+IGPhrase.swift
+//  TheGenerator
 //
 //  Created by Nick Schelle on 2025-09-21.
 //
@@ -8,33 +8,37 @@
 import Foundation
 import SwiftData
 
-extension IHAppSchemaV1 {
+extension IGAppSchemaV1 {
     
     @Model
-    final class IHGroup {
+    final class IGPhrase {
         
         var id: UUID = UUID()
-        var name: String = ""
-        var sortOrder: Int = 0
+        var value: String = ""
         var descriptionBlock: String = ""
         var dateCreated: Date = Date.now
         var dateModified: Date = Date.now
         
-        @Relationship(deleteRule: .cascade, inverse: \IHGroupPhraseLink.group)
-        var phraseLinks: [IHGroupPhraseLink] = []
+        private(set) var revisionMap: [String: Int] = [:]
+        private(set) var uploadMap: [String: Int] = [:]
+        
+        @Relationship(deleteRule: .cascade, inverse: \IGGroupPhraseLink.phrase)
+        var groupLinks: [IGGroupPhraseLink] = []
         
         init(
-            _ name: String,
+            _ value: String,
             id: UUID = UUID(),
-            sortOrder: Int = 0,
             descriptionBlock: String = "",
+            revisionMap: [String : Int] = [:],
+            uploadMap: [String : Int] = [:],
             dateCreated: Date = .now,
             dateModified: Date = .now
         ) {
             self.id = id
-            self.name = name
-            self.sortOrder = sortOrder
+            self.value = value
             self.descriptionBlock = descriptionBlock
+            self.revisionMap = revisionMap
+            self.uploadMap = uploadMap
             self.dateCreated = dateCreated
             self.dateModified = dateModified
         }

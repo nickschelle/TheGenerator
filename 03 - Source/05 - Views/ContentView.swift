@@ -11,11 +11,11 @@ import SwiftData
 struct ContentView: View {
     
     @Environment(\.modelContext) private var context
-    @Query private var phrases: [IHPhrase]
+    @Query private var phrases: [IGPhrase]
     @State private var newValue: String = ""
-    @Query private var groups: [IHGroup]
+    @Query private var groups: [IGGroup]
     @State private var newName: String = ""
-    @State private var selectedGroups: Set<IHGroup> = []
+    @State private var selectedGroups: Set<IGGroup> = []
     
     var body: some View {
         VStack {
@@ -67,7 +67,7 @@ struct ContentView: View {
     
     private func addPhrase() {
         do {
-            let phrase = try IHPhraseManager.newPhrase(newValue, in: context)
+            let phrase = try IGPhraseManager.newPhrase(newValue, in: context)
             try context.save()
         } catch {
             print("Failed to add Phrase: \(error)")
@@ -75,9 +75,9 @@ struct ContentView: View {
         newValue = ""
     }
     
-    private func deletePhrase(_ phrase: IHPhrase) {
+    private func deletePhrase(_ phrase: IGPhrase) {
         do {
-            try IHPhraseManager.deletePhrases([phrase], in: context)
+            try IGPhraseManager.deletePhrases([phrase], in: context)
             try context.save()
         } catch {
             print("Failed to delete phrase: \(error)")
@@ -86,7 +86,7 @@ struct ContentView: View {
     
     private func addGroup() {
         do {
-            if try !IHGroupManager.newGroup(newName, in: context) {
+            if try !IGGroupManager.newGroup(newName, in: context) {
                 print("already exists")
             } else {
                 try context.save()
@@ -97,27 +97,27 @@ struct ContentView: View {
        }
     }
     
-    private func addToGroups(_ phrase: IHPhrase) {
+    private func addToGroups(_ phrase: IGPhrase) {
         do {
-            IHGroupManager.add([phrase], to: selectedGroups, in: context)
+            IGGroupManager.add([phrase], to: selectedGroups, in: context)
             try context.save()
         } catch {
             print("Failed to add phrase to group: \(error)")
         }
     }
     
-    private func removeFromGroups(_ phrase: IHPhrase) {
+    private func removeFromGroups(_ phrase: IGPhrase) {
         do {
-            try IHGroupManager.remove([phrase], from: selectedGroups, in: context)
+            try IGGroupManager.remove([phrase], from: selectedGroups, in: context)
             try context.save()
         } catch {
             print("Failed to remove phrase from group: \(error)")
         }
     }
     
-    private func deleteGroup(_ group: IHGroup) {
+    private func deleteGroup(_ group: IGGroup) {
         do {
-            try IHGroupManager.deleteGroups([group], in: context)
+            try IGGroupManager.deleteGroups([group], in: context)
             try context.save()
         }catch {
                print("Failed to delete group: \(error)")

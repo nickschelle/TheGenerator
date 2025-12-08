@@ -1,23 +1,14 @@
 //
 //  Date+DisplayString.swift
-//  IHeartEverything
+//  TheGenerator
 //
 //  Created by Nick Schelle on 2025-11-08.
 //
 
 import Foundation
 
-// MARK: - UI-Friendly Date Formatting
-
 extension Date {
-    /// Returns a concise, user-facing date string optimized for UI display.
-    ///
-    /// Examples:
-    /// ```
-    /// Today, 3:45 PM
-    /// Yesterday, 9:10 AM
-    /// Nov 5, 2025, 7:30 PM
-    /// ```
+
     var displayString: String {
         let calendar = Calendar.current
         if calendar.isDateInToday(self) {

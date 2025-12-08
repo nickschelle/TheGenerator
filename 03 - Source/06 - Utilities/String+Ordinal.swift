@@ -1,9 +1,10 @@
 //
 //  String+Ordinal.swift
-//  IHeartEverything
+//  TheGenerator
 //
 //  Created by Nick Schelle on 2025-10-10.
 //
+
 import Foundation
 
 extension Int {

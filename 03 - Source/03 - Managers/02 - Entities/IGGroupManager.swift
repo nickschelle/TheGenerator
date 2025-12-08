@@ -1,5 +1,5 @@
 //
-//  IHGroupManager.swift
+//  IGGroupManager.swift
 //  TheGenerator
 //
 //  Created by Nick Schelle on 2025-12-06.
@@ -8,30 +8,30 @@
 import Foundation
 import SwiftData
 
-enum IHGroupManager {
+enum IGGroupManager {
     
     @discardableResult
     static func newGroup(
         _ rawName: String,
-        //with tags: Set<IHTempTag> = [],
+        //with tags: Set<IGTempTag> = [],
         in context: ModelContext
     ) throws -> Bool {
         
-        let normalized = IHGroup.normalize(rawName)
+        let normalized = IGGroup.normalizeForSave(rawName)
             
-        let descriptor = FetchDescriptor<IHGroup>(
+        let descriptor = FetchDescriptor<IGGroup>(
             predicate: #Predicate { $0.name == normalized }
         )
         guard try context.fetchCount(descriptor) == 0 else { return false }
         
-        let nextSortOrder = try context.fetchCount(FetchDescriptor<IHGroup>())
+        let nextSortOrder = try context.fetchCount(FetchDescriptor<IGGroup>())
         
-        let group = IHGroup(normalized, sortOrder: nextSortOrder)
+        let group = IGGroup(normalized, sortOrder: nextSortOrder)
         context.insert(group)
         
         // MARK: - Apply tags (future)
         /*
-        IHTagManager.updateTags(
+        IGTagManager.updateTags(
             to: tags,
             for: group,
             in: context
@@ -41,7 +41,7 @@ enum IHGroupManager {
     }
     
     static func deleteGroups(
-        _ groups: some Collection<IHGroup>,
+        _ groups: some Collection<IGGroup>,
         in context: ModelContext
     ) throws {
         
@@ -59,7 +59,7 @@ enum IHGroupManager {
         }
         
         // MARK: - Fetch remaining groups (sorted by existing sortOrder)
-        let descriptor = FetchDescriptor<IHGroup>(
+        let descriptor = FetchDescriptor<IGGroup>(
             sortBy: [SortDescriptor(\.sortOrder)]
         )
         
@@ -72,26 +72,24 @@ enum IHGroupManager {
     }
     
     static func add(
-        _ phrases: some Collection<IHPhrase>,
-        to groups: some Collection<IHGroup>,
+        _ phrases: some Collection<IGPhrase>,
+        to groups: some Collection<IGGroup>,
         in context: ModelContext
     ) {
         guard !phrases.isEmpty, !groups.isEmpty else { return }
         
         for group in groups {
             
-            // Compute next sequential sortOrder safely
             let existingOrders = group.phraseLinks.map(\.sortOrder)
             var nextOrder = (existingOrders.max() ?? -1) + 1
             
             for phrase in phrases {
-                // Skip if the link already exists
                 let alreadyLinked = group.phraseLinks.contains {
                     $0.phrase?.id == phrase.id
                 }
                 if alreadyLinked { continue }
                 
-                let link = IHGroupPhraseLink(
+                let link = IGGroupPhraseLink(
                     group: group,
                     phrase: phrase,
                     sortOrder: nextOrder
@@ -105,12 +103,9 @@ enum IHGroupManager {
         }
     }
 
-    // MARK: - Remove Phrases from Groups
-
-    /// Removes a set of phrases from a set of groups.
     static func remove(
-        _ phrases: some Collection<IHPhrase>,
-        from groups: some Collection<IHGroup>,
+        _ phrases: some Collection<IGPhrase>,
+        from groups: some Collection<IGGroup>,
         in context: ModelContext
     ) throws {
         
@@ -152,7 +147,7 @@ enum IHGroupManager {
     }
     
     static func resetGroupsSortOrder(in context: ModelContext) throws {
-        let descriptor = FetchDescriptor<IHGroup>(
+        let descriptor = FetchDescriptor<IGGroup>(
             sortBy: [SortDescriptor(\.name)]
         )
         var groups = try context.fetch(descriptor)
@@ -160,7 +155,7 @@ enum IHGroupManager {
         try groups.renumber()
     }
     
-    static func removeAllPhrases(from group: IHGroup, in context: ModelContext) {
+    static func removeAllPhrases(from group: IGGroup, in context: ModelContext) {
         for link in group.phraseLinks {
             context.delete(link)
             link.phrase?.touch()
