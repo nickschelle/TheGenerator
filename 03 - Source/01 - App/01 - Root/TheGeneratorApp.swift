@@ -10,10 +10,15 @@ import SwiftData
 
 @main
 struct TheGeneratorApp: App {
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [IHPhrase.self, IHGroup.self])
+                .modelContainer(for: [
+                    IHPhrase.self,
+                    IHGroup.self,
+                    IHGroupPhraseLink.self
+                ])
         }
     }
 }

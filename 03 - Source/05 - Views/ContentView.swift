@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var newValue: String = ""
     @Query private var groups: [IHGroup]
     @State private var newName: String = ""
+    @State private var selectedGroups: Set<IHGroup> = []
     
     var body: some View {
         VStack {
@@ -23,66 +24,104 @@ struct ContentView: View {
                 .disabled(newValue.isEmpty)
             List {
                 ForEach(phrases) { phrase in
-                    Text(phrase.value)
+                    HStack {
+                        Text(phrase.value)
+                        Spacer()
+                        Text(phrase.dateModified.displayString)
+                    }
                         .contextMenu{
                             Button("Delete") {
                                 self.deletePhrase(phrase)
                             }
+                            Button("Add to Group") {
+                                self.addToGroups(phrase)
+                            }
+                            .disabled(selectedGroups.isEmpty)
+                            Button("Remove from Group") {
+                                self.removeFromGroups(phrase)
+                            }
+                            .disabled(selectedGroups.isEmpty)
                         }
                 }
             }
             TextField("Group Name", text: $newName)
             Button("Add Group", action: addGroup)
                 .disabled(newName.isEmpty)
-            List {
+            List(selection: $selectedGroups) {
                 ForEach(groups) { group in
-                    Text(group.name)
-                        .contextMenu{
-                            Button("Delete") {
-                                self.deleteGroup(group)
-                            }
+                    HStack {
+                        Text(group.name)
+                        Spacer()
+                        Text(group.dateModified.displayString)
+                    }
+                    .tag(group)
+                    .contextMenu{
+                        Button("Delete") {
+                            self.deleteGroup(group)
                         }
+                    }
                 }
             }
         }
     }
     
     private func addPhrase() {
-        let result = IHPhraseManager.newPhrase(newValue, in: context)
-        if case .success(let phrase) = result {
-           
-        } else if case .failure(let error) = result {
-            print(error)
+        do {
+            let phrase = try IHPhraseManager.newPhrase(newValue, in: context)
+            try context.save()
+        } catch {
+            print("Failed to add Phrase: \(error)")
         }
-        
         newValue = ""
     }
     
     private func deletePhrase(_ phrase: IHPhrase) {
-        IHPhraseManager.deletePhrases([phrase], in: context)
-        try? context.save()
+        do {
+            try IHPhraseManager.deletePhrases([phrase], in: context)
+            try context.save()
+        } catch {
+            print("Failed to delete phrase: \(error)")
+        }
     }
     
     private func addGroup() {
-        let result = IHGroupManager.newGroup(newName, in: context)
-        if case .success(let created) = result {
-            if created {
-                
+        do {
+            if try !IHGroupManager.newGroup(newName, in: context) {
+                print("already exists")
             } else {
-                
+                try context.save()
+                newName = ""
             }
-        } else if case .failure(let error) = result {
-            print(error)
+        } catch {
+           print("Failed to add group: \(error)")
+       }
+    }
+    
+    private func addToGroups(_ phrase: IHPhrase) {
+        do {
+            IHGroupManager.add([phrase], to: selectedGroups, in: context)
+            try context.save()
+        } catch {
+            print("Failed to add phrase to group: \(error)")
         }
-        
-        newValue = ""
+    }
+    
+    private func removeFromGroups(_ phrase: IHPhrase) {
+        do {
+            try IHGroupManager.remove([phrase], from: selectedGroups, in: context)
+            try context.save()
+        } catch {
+            print("Failed to remove phrase from group: \(error)")
+        }
     }
     
     private func deleteGroup(_ group: IHGroup) {
-        let result = IHGroupManager.deleteGroups([group], in: context)
-        if case .failure(let error) = result {
-            print(error)
-        }
+        do {
+            try IHGroupManager.deleteGroups([group], in: context)
+            try context.save()
+        }catch {
+               print("Failed to delete group: \(error)")
+           }
     }
     
     

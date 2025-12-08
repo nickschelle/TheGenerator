@@ -7,6 +7,12 @@
 
 import Foundation
 
+extension IHGroup {
+    var phrases: [IHPhrase] {
+        phraseLinks.compactMap(\.phrase)
+    }
+}
+
 extension IHGroup: IHDateStampable {}
 
 extension IHGroup: IHOrderSortable {}

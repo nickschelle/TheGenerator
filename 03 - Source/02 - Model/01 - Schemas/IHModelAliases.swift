@@ -9,3 +9,4 @@ import Foundation
 
 typealias IHPhrase = IHAppSchemaV1.IHPhrase
 typealias IHGroup = IHAppSchemaV1.IHGroup
+typealias IHGroupPhraseLink = IHAppSchemaV1.IHGroupPhraseLink

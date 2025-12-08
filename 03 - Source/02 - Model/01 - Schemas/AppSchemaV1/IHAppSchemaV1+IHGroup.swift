@@ -9,6 +9,7 @@ import Foundation
 import SwiftData
 
 extension IHAppSchemaV1 {
+    
     @Model
     final class IHGroup {
         
@@ -18,6 +19,9 @@ extension IHAppSchemaV1 {
         var descriptionBlock: String = ""
         var dateCreated: Date = Date.now
         var dateModified: Date = Date.now
+        
+        @Relationship(deleteRule: .cascade, inverse: \IHGroupPhraseLink.group)
+        var phraseLinks: [IHGroupPhraseLink] = []
         
         init(
             _ name: String,

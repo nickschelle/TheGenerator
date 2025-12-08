@@ -7,6 +7,12 @@
 
 import Foundation
 
+extension IHPhrase {
+    var groups: [IHGroup] {
+        groupLinks.compactMap(\.group)
+    }
+}
+
 extension IHPhrase: IHDateStampable {}
 
 extension IHPhrase: IHNormalizableString {

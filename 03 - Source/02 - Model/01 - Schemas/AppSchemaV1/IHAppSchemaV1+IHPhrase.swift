@@ -22,6 +22,9 @@ extension IHAppSchemaV1 {
         private(set) var revisionMap: [String: Int] = [:]
         private(set) var uploadMap: [String: Int] = [:]
         
+        @Relationship(deleteRule: .cascade, inverse: \IHGroupPhraseLink.phrase)
+        var groupLinks: [IHGroupPhraseLink] = []
+        
         init(
             _ value: String,
             id: UUID = UUID(),
