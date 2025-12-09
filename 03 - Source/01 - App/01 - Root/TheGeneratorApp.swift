@@ -14,10 +14,17 @@ struct TheGeneratorApp: App {
     @State private var app = IGAppModel()
     
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        Window("The Generator", id: "main") {
+            MainView()
                 .modelContainer(app.container)
                 .environment(app)
+                //.environment(settings)
+        }
+        .windowResizability(.contentSize)
+        .windowStyle(.titleBar)
+        .defaultPosition(.center)
+        .commands {
+            // fill in later
         }
     }
 }

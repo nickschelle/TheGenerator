@@ -40,6 +40,40 @@ enum IGGroupManager {
         return true
     }
     
+    static func updateGroup(
+        _ group: IGGroup,
+        to newName: String,
+        //with tags: some Collection<IHTempTag>,
+        in context: ModelContext
+    ) throws -> Bool {
+        var touched = false
+
+        let normalized = IGGroup.normalizeForSave(newName)
+        
+        // MARK: - Name Update
+        if group.name != normalized {
+            let descriptor = FetchDescriptor<IGGroup>(
+                predicate: #Predicate { $0.name == normalized }
+            )
+            guard try context.fetchCount(descriptor) == 0 else { return false }
+            
+            group.name = normalized
+            touched = true
+        }
+        
+        /*
+        // MARK: - Tag Update
+        if IHTagManager.updateTags(to: tags, for: group, in: context) {
+            touched = true
+        }
+         */
+        // MARK: - Only touch + save if something changed
+        if touched {
+            group.touch()
+        }
+        return true
+    }
+    
     static func deleteGroups(
         _ groups: some Collection<IGGroup>,
         in context: ModelContext

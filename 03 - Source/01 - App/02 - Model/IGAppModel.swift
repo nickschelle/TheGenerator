@@ -18,33 +18,35 @@ final class IGAppModel {
     let context: ModelContext
     //let imageManager: IHImageManager
     
-    //var activeSheet: IHAppSheet?
-    /*
-    var isShowingConfirmation: Bool = false
-    var confirmationContent: IHConfirmationContent = .defaultValue
+    var appError: IGAppError?
     
-    func showConfirmation(_ content: IHConfirmationContent) {
+    var activeSheet: IGAppSheet?
+ 
+    var isShowingConfirmation: Bool = false
+    var confirmationContent: IGConfirmationContent = .defaultValue
+    
+    func showConfirmation(_ content: IGConfirmationContent) {
         confirmationContent = content
         isShowingConfirmation = true
     }
-    
-    var selectedContents: Set<IHContentSelection> = []
-    var selectedContent: IHContentSelection? {
+
+    var selectedContents: Set<IGContentSelection> = []
+    var selectedContent: IGContentSelection? {
         guard selectedContents.count == 1 else { return nil }
         return selectedContents.first
     }
-    var selectedGroup: IHGroup? {
+    var selectedGroup: IGGroup? {
         selectedContent?.group
     }
-    var selectedGroups: Set<IHGroup> {
+    var selectedGroups: Set<IGGroup> {
         get {
             Set(selectedContents.compactMap(\.group))
         }
         set {
-            selectedContents = Set(newValue.map { IHContentSelection.group($0) })
+            selectedContents = Set(newValue.map { IGContentSelection.group($0) })
         }
     }
-    
+    /*
     var selectedDetails: Set<IHDetailSelection> = []
     var selectedDetail: IHDetailSelection? {
         guard selectedDetails.count == 1 else { return nil }
