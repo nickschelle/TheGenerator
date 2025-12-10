@@ -46,13 +46,27 @@ final class IGAppModel {
             selectedContents = Set(newValue.map { IGContentSelection.group($0) })
         }
     }
-    /*
-    var selectedDetails: Set<IHDetailSelection> = []
-    var selectedDetail: IHDetailSelection? {
+  
+    var selectedDetails: Set<IGDetailSelection> = []
+    var selectedDetail: IGDetailSelection? {
         guard selectedDetails.count == 1 else { return nil }
         return selectedDetails.first
     }
     
+    var selectedPhrases: Set<IGPhrase> {
+        get {
+            Set(selectedDetails.compactMap(\.phrase))
+        }
+        set {
+            selectedDetails = Set(newValue.map { IGDetailSelection.phrase($0) })
+        }
+    }
+    
+    var selectedPhrase: IGPhrase? {
+        selectedDetail?.phrase
+    }
+    
+    /*
     var selectedRecords: Set<IHRecord> {
         get {
             Set(selectedDetails.compactMap(\.record))
@@ -65,25 +79,13 @@ final class IGAppModel {
     var selectedRecord: IHRecord? {
         selectedDetail?.record
     }
-
-    var selectedPhrases: Set<IHPhrase> {
-        get {
-            Set(selectedDetails.compactMap(\.phrase))
-        }
-        set {
-            selectedDetails = Set(newValue.map { IHDetailSelection.phrase($0) })
-        }
-    }
-    
-    var selectedPhrase: IHPhrase? {
-        selectedDetail?.phrase
-    }
+     */
     
     var detailPath: NavigationPath = NavigationPath()
     
-    var phraseToEdit: IHPhrase?
+    var phraseToEdit: IGPhrase?
     var isAddingPhrase: Bool = false
-    
+    /*
     var inspectorRecord: IHRecord?
     
     var locationImportInProgress: Bool = false

@@ -31,6 +31,47 @@ enum IGPhraseManager {
         return phrase
     }
     
+    @discardableResult
+    static func updatePhrase(
+        _ phrase: IGPhrase,
+        value: String? = nil,
+        // tags: (any Collection<IHTag>)? = nil,
+        in context: ModelContext
+    ) throws -> Bool {
+
+        var didChange = false
+
+        // 1. Update name if needed
+        if let value, !value.isEmpty {
+            let normalized = IGPhrase.normalizeForSave(value)
+
+            if normalized != phrase.value, !normalized.isEmpty {
+                let descriptor = FetchDescriptor<IGPhrase>(
+                    predicate: #Predicate { $0.value == normalized }
+                )
+
+                if let existing = try context.fetch(descriptor).first {
+                    return false
+                }
+                
+                phrase.value = normalized
+                didChange = true
+            }
+        }
+        /*
+        // 2. Update tags
+        if let tags, IHTagManager.updateTags(to: tags, for: phrase, in: context) {
+            didChange = true
+        }
+         */
+        // 3. Persist + touch
+        if didChange {
+            phrase.touch()
+        }
+
+        return true
+    }
+    
     static func deletePhrases(
         _ phrases: some Collection<IGPhrase>,
         //with settings: IGAppSettings,

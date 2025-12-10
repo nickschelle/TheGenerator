@@ -23,8 +23,7 @@ struct MainView: View {
         NavigationSplitView {
             IGSidebar()
         } content: {
-            Text("Content View")
-            //IHContentView()
+            IGContentView()
         } detail: {
             Text("Detail View")
             //IHDetailView()
