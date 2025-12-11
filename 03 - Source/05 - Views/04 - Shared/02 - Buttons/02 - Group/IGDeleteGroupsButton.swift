@@ -40,6 +40,9 @@ struct IGDeleteGroupsButton: View {
         do {
             try IGGroupManager.deleteGroups(groups, in: app.context)
             try app.context.save()
+            if try IGTagManager.cleanOrphanTags(in: app.context) > 0 {
+                try app.context.save()
+            }
             app.selectedContents = [.allPhrases]
         } catch {
             app.appError = .groupFailure("Failed to delete group: \(error)")

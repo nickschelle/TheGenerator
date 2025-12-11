@@ -13,6 +13,7 @@ enum IGAppSchemaV1: VersionedSchema {
         IGPhrase.self,
         IGGroup.self,
         IGGroupPhraseLink.self,
-        IGTag.self
+        IGTag.self,
+        IGSourceTagLink.self
     ]}
 }

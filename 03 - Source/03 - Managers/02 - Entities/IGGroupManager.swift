@@ -13,7 +13,7 @@ enum IGGroupManager {
     @discardableResult
     static func newGroup(
         _ rawName: String,
-        //with tags: Set<IGTempTag> = [],
+        with tags: Set<IGTempTag> = [],
         in context: ModelContext
     ) throws -> Bool {
         
@@ -29,21 +29,19 @@ enum IGGroupManager {
         let group = IGGroup(normalized, sortOrder: nextSortOrder)
         context.insert(group)
         
-        // MARK: - Apply tags (future)
-        /*
-        IGTagManager.updateTags(
+        try IGTagManager.updateTags(
             to: tags,
             for: group,
             in: context
         )
-        */
+
         return true
     }
     
     static func updateGroup(
         _ group: IGGroup,
         to newName: String,
-        //with tags: some Collection<IHTempTag>,
+        with tags: some Collection<IGTempTag>,
         in context: ModelContext
     ) throws -> Bool {
         var touched = false
@@ -61,13 +59,11 @@ enum IGGroupManager {
             touched = true
         }
         
-        /*
-        // MARK: - Tag Update
-        if IHTagManager.updateTags(to: tags, for: group, in: context) {
+
+        if try IGTagManager.updateTags(to: tags, for: group, in: context) {
             touched = true
         }
-         */
-        // MARK: - Only touch + save if something changed
+
         if touched {
             group.touch()
         }
@@ -87,7 +83,7 @@ enum IGGroupManager {
             lowestSortOrder = min(lowestSortOrder, group.sortOrder)
             
             removeAllPhrases(from: group, in: context)
-            //removeAllTags(from: group, in: context)
+            try removeAllTags(from: group, in: context)
             
             context.delete(group)
         }
@@ -194,6 +190,11 @@ enum IGGroupManager {
             context.delete(link)
             link.phrase?.touch()
         }
+        group.touch()
+    }
+    
+    static func removeAllTags(from group: IGGroup, in context: ModelContext) throws {
+        try IGTagManager.updateTags(to: Array<IGTag>(), for: group, in: context)
         group.touch()
     }
 }

@@ -15,7 +15,7 @@ struct IGGroupInfoSheet: View {
 
     @State private var isShowingDuplicateAlert = false
     @State private var tempName: String = ""
-    //@State private var tempTags: Set<IGTempTag> = []
+    @State private var tempTags: Set<IGTempTag> = []
 
     private let group: IGGroup?
 
@@ -28,11 +28,11 @@ struct IGGroupInfoSheet: View {
     var tempGroup: IGGroup {
         IGGroup(tempName)
     }
-    /*
+
     var presetTags: Set<IGTag> {
         tempName.isEmpty ? [] : tempGroup.presetTags
     }
-     */
+
     // MARK: - Body
 
     var body: some View {
@@ -47,7 +47,7 @@ struct IGGroupInfoSheet: View {
                             tempName = normalized
                         }
                     }
-                //IGTagEditor($tempTags, staticTags: presetTags, for: tempGroup)
+                IGTagEditor($tempTags, staticTags: presetTags, for: tempGroup)
             }
         }
         .formStyle(.grouped)
@@ -65,7 +65,12 @@ struct IGGroupInfoSheet: View {
         .onAppear {
             if let group {
                 tempName = group.name
-               // tempTags = Set(app.context.tags(for: group).map{ IHTempTag(from: $0, ignoring: group.id) })
+                do {
+                    let groupTags = try app.context.tags(for: group)
+                    tempTags = Set( groupTags.map{ IGTempTag(from: $0, ignoring: group.id) })
+                } catch {
+                    app.appError = .groupFailure("Failed to fetch group tags: \(error.localizedDescription)")
+                }
             }
         }
         .alert("A group with that name already exists.", isPresented: $isShowingDuplicateAlert) {
@@ -81,11 +86,13 @@ struct IGGroupInfoSheet: View {
                 wasCreatedOrUpdated = try IGGroupManager.updateGroup(
                     group,
                     to: tempName,
+                    with: tempTags,
                     in: app.context
                 )
             } else {
                 wasCreatedOrUpdated = try IGGroupManager.newGroup(
                     tempName,
+                    with: tempTags,
                     in: app.context
                 )
             }
@@ -96,6 +103,9 @@ struct IGGroupInfoSheet: View {
             }
             
             try app.context.save()
+            if try IGTagManager.cleanOrphanTags(in: app.context) > 0 {
+                try app.context.save()
+            }
             dismiss()
             
         } catch {

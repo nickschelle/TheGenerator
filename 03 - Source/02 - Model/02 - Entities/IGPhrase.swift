@@ -13,6 +13,16 @@ extension IGPhrase {
     }
 }
 
+extension IGPhrase: IGTagPresetable {
+    var presetTags: Set<IGTag> {
+        [IGTag(normalizing: value, scope: .phrase, isPreset: true)]
+    }
+}
+
+extension IGPhrase: IGTaggable {
+    static var tagScope: IGTagScope { .phrase }
+}
+
 extension IGPhrase: IGDateStampable {}
 
 extension IGPhrase: IGNormalizableString {}

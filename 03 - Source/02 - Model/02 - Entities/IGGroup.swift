@@ -13,6 +13,17 @@ extension IGGroup {
     }
 }
 
+extension IGGroup: IGTagPresetable {
+    var presetTags: Set<IGTag> {
+        [IGTag(normalizing: name, scope: .group, isPreset: true)]
+    }
+}
+
+extension IGGroup: IGTaggable {
+    static var tagScope: IGTagScope { .group }
+}
+
+
 extension IGGroup: IGDateStampable {}
 
 extension IGGroup: IGOrderSortable {}

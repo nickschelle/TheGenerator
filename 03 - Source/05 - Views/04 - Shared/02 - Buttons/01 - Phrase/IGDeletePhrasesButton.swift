@@ -42,6 +42,9 @@ struct IGDeletePhrasesButton: View {
         do {
             try IGPhraseManager.deletePhrases(phrases, /*with: settings,*/ in: app.context)
             try app.context.save()
+            if try IGTagManager.cleanOrphanTags(in: app.context) > 0 {
+                try app.context.save()
+            }
             app.selectedDetails = []
         } catch {
             app.appError = .phraseFailure("Failed to delete phrase: \(error)")

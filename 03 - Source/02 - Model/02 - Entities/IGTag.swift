@@ -6,8 +6,22 @@
 //
 
 import Foundation
-/*
+
 extension IGTag {
+    
+    convenience init(
+        normalizing rawValue: String,
+        scope: IGTagScope = .defaultValue,
+        isPreset: Bool = false
+    ) {
+        let normalized = IGTag.normalizeForSave(rawValue)
+        self.init(
+            normalized,
+            scope: scope,
+            isPreset: isPreset
+        )
+    }
+    
     func isTagging(ignoring sourceID: UUID? = nil) -> Bool {
         guard let sourceID else {
             return !links.isEmpty
@@ -23,13 +37,15 @@ extension IGTag {
         return links.filter { $0.sourceID != sourceID }.count
     }
 }
-*/
-extension IGTag {
+
+extension IGTag: IGTagRepresentable {
     var scope: IGTagScope {
         get { IGTagScope(rawValue: rawScope) ?? .defaultValue }
         set { rawScope = newValue.rawValue }
     }
 }
+
+extension IGTag: IGPrioritizable {}
 
 extension IGTag: IGDateStampable {}
 

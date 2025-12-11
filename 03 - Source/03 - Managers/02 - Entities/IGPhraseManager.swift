@@ -35,13 +35,12 @@ enum IGPhraseManager {
     static func updatePhrase(
         _ phrase: IGPhrase,
         value: String? = nil,
-        // tags: (any Collection<IHTag>)? = nil,
+        tags: (any Collection<IGTag>)? = nil,
         in context: ModelContext
     ) throws -> Bool {
 
         var didChange = false
 
-        // 1. Update name if needed
         if let value, !value.isEmpty {
             let normalized = IGPhrase.normalizeForSave(value)
 
@@ -50,7 +49,7 @@ enum IGPhraseManager {
                     predicate: #Predicate { $0.value == normalized }
                 )
 
-                if let existing = try context.fetch(descriptor).first {
+                if try context.fetchCount(descriptor) > 0 {
                     return false
                 }
                 
@@ -58,13 +57,11 @@ enum IGPhraseManager {
                 didChange = true
             }
         }
-        /*
-        // 2. Update tags
-        if let tags, IHTagManager.updateTags(to: tags, for: phrase, in: context) {
+
+        if let tags, try IGTagManager.updateTags(to: tags, for: phrase, in: context) {
             didChange = true
         }
-         */
-        // 3. Persist + touch
+
         if didChange {
             phrase.touch()
         }
@@ -78,7 +75,6 @@ enum IGPhraseManager {
         in context: ModelContext
     ) throws {
         for phrase in phrases {
-            // Remove group links
             for link in phrase.groupLinks {
                 context.delete(link)
                 link.group?.touch()
@@ -86,11 +82,9 @@ enum IGPhraseManager {
             /*
             IGRecordManager.deleteRecords(phrase.records, with: settings, in: context)
              */
-            /*
-            // Remove all tag links
-            IGTagManager.updateTags(to: [] as Set<IGTag>, for: phrase, in: context)
-             */
-            // Delete phrase
+
+            try IGTagManager.updateTags(to: Set<IGTag>(), for: phrase, in: context)
+
             context.delete(phrase)
         }
     }

@@ -19,6 +19,9 @@ extension IGAppSchemaV1 {
         var dateModified: Date = Date.now
         var rawScope: String = IGTagScope.defaultValue.rawValue
         var isPreset: Bool = false
+        
+        @Relationship(deleteRule: .cascade, inverse: \IGSourceTagLink.tag)
+        var links: [IGSourceTagLink] = []
 
         init(
             _ value: String,
