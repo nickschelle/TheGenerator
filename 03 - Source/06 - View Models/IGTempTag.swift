@@ -15,17 +15,20 @@ struct IGTempTag {
     var scope: IGTagScope
     var isPreset: Bool
     var linkCount: Int
+    var isPartiallyApplied: Bool
 
     init(
         _ value: String,
         scope: IGTagScope,
         linkCount: Int = 0,
-        isPreset: Bool = false
+        isPreset: Bool = false,
+        isPartiallyApplied: Bool = false
     ) {
         self.value = value
         self.scope = scope
         self.linkCount = linkCount
         self.isPreset = isPreset
+        self.isPartiallyApplied = isPartiallyApplied
     }
 }
 
@@ -35,7 +38,7 @@ extension IGTempTag {
     
     init(
         from tag: IGTag,
-        ignoring sourceID: UUID? = nil
+        ignoring sourceID: UUID? = nil,
     ) {
         self.value = tag.value
         self.scope = tag.scope
@@ -48,6 +51,30 @@ extension IGTempTag {
         }
 
         self.linkCount = links.count
+
+        self.isPartiallyApplied = false
+    }
+    
+    init(
+        from tag: IGTag,
+        evalutating sourceIDs: Set<UUID>
+    ) {
+        self.value = tag.value
+        self.scope = tag.scope
+        self.isPreset = tag.isPreset
+
+        
+        let links = tag.links.filter { !sourceIDs.contains($0.sourceID) }
+
+        self.linkCount = links.count
+        let linkedSourceIDs = tag.links.compactMap(\.sourceID)
+        
+        let matchStatus = IGMatchStatus.evaluate(
+            selection: sourceIDs,
+            in: linkedSourceIDs
+        )
+
+        self.isPartiallyApplied = (matchStatus == .some)
     }
     
     /*

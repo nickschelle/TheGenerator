@@ -172,6 +172,65 @@ enum IGTagManager {
             in: context
         )
     }
+    
+    @discardableResult
+    static func updateTags(
+        using tempTags: some Collection<IGTempTag>,
+        for sources: Set<IGTaggableIdentity>,
+        in context: ModelContext
+    ) throws -> Bool {
+
+        guard !sources.isEmpty else { return false }
+
+        // STEP 1 — Partition temp tags
+        let resolvedTempTags = tempTags.filter { !$0.isPartiallyApplied }
+        let partialTempTags  = tempTags.filter {  $0.isPartiallyApplied }
+
+        // Resolve model tags for fully-applied tags once
+        let resolvedTags: [IGTag] = try resolvedTempTags.map {
+            try $0.getTag(in: context)
+        }
+
+        // STEP 2 — Fetch existing links
+        let existingLinks = try context.tagLinks(for: sources)
+
+        // STEP 3 — Group links by source
+        let linksBySourceID = Dictionary(
+            grouping: existingLinks,
+            by: \.sourceID
+        )
+
+        var didChange = false
+
+        // STEP 4 — Reconcile per source
+        for source in sources {
+            let links = linksBySourceID[source.id] ?? []
+            let existingTags = links.compactMap(\.tag)
+
+            // Preserve partial tags already applied to this source
+            let preservedPartialTags = existingTags.filter { existingTag in
+                partialTempTags.contains {
+                    $0.value == existingTag.value &&
+                    $0.scope == existingTag.scope
+                }
+            }
+
+            let desiredTagsForSource = resolvedTags + preservedPartialTags
+
+            let changed = try updateLinks(
+                desiredTags: desiredTagsForSource,
+                existingLinks: links,
+                addLink: { tag in
+                    IGSourceTagLink(sourceScope: source.tagScope, sourceID: source.id, tag: tag)
+                },
+                in: context
+            )
+
+            didChange = didChange || changed
+        }
+
+        return didChange
+    }
 
     @discardableResult
     private static func updateLinks(

@@ -15,6 +15,10 @@ extension ModelContext {
     func tags(for source: some IGTaggable) throws -> [IGTag] {
         try tagLinks(for: source).compactMap(\.tag)
     }
+    
+    func tags(for identities: Set<IGTaggableIdentity>) throws -> [IGTag] {
+        try tagLinks(for: identities).compactMap(\.tag)
+    }
 
     func tags(at scope: IGTagScope) throws -> [IGTag] {
         try tagLinks(at: scope).compactMap(\.tag)

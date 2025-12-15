@@ -28,8 +28,13 @@ struct IGGroupSidebarItem: View {
     var body: some View {
         IGSidebarItem(group.name, systemImage: "rectangle.stack", count: links.count)
         .contextMenu {
-           IGEditGroupButton(group)
-           IGDeleteGroupsButton(group)
+            if app.selectedGroups.isEmpty {
+                IGEditGroupButton(group)
+            } else {
+                IGEditTagsButton(selection: app.selectedGroups)
+            }
+            IGDeleteGroupsButton(group)
+           
         }
     }
 }

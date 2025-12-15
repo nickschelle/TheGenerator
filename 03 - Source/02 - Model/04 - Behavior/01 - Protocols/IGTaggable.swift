@@ -1,10 +1,3 @@
-//
-//  IGTaggable.swift
-//  TheGenerator
-//
-//  Created by Nick Schelle on 2025-09-22.
-//
-
 import Foundation
 import SwiftData
 
@@ -12,7 +5,6 @@ protocol IGTaggable: PersistentModel {
     var id: UUID { get }
     static var tagScope: IGTagScope { get }
 }
-
 
 extension IGTaggable {
 
@@ -22,4 +14,13 @@ extension IGTaggable {
             $0.sourceScope == Self.tagScope
         }
     }
+
+    var identity: IGTaggableIdentity {
+        IGTaggableIdentity(id: id, tagScope: Self.tagScope)
+    }
+}
+
+struct IGTaggableIdentity: Hashable {
+    let id: UUID
+    let tagScope: IGTagScope
 }

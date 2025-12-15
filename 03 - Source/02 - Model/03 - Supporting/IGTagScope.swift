@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 enum IGTagScope: String, CaseIterable {
     
     case defaults

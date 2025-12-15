@@ -72,13 +72,20 @@ struct IGTagEditor: View {
             }
         }
         .onAppear {
-            let rawScope = self.scope.rawValue
-            let description = FetchDescriptor(predicate: #Predicate<IGTag> {
-                $0.rawScope == rawScope
-            },
-            sortBy: [SortDescriptor(\.value)])
-            let tags = (try? app.context.fetch(description)) ?? []
-            scopeTags = Set(tags.map { IGTempTag(from: $0, ignoring: sourceID)})
+            do {
+                let rawScope = self.scope.rawValue
+                let description = FetchDescriptor(predicate: #Predicate<IGTag> {
+                    $0.rawScope == rawScope
+                },
+                sortBy: [SortDescriptor(\.value)]
+                )
+                let tags = try app.context.fetch(description)
+                scopeTags = Set(tags.map { IGTempTag(from: $0, ignoring: sourceID)})
+            } catch {
+                app.appError = .tagFailure(
+                    "Failed to fetch tags for: \(error)"
+                )
+            }
         }
         .alert("Edit Tag", isPresented: $isShowingEditAlert, presenting: tagToEdit) { tag in
             TextField("", text: $tempValue)
@@ -125,7 +132,12 @@ struct IGTagEditor: View {
         withAnimation {
             switch action {
             case .add:
-                selectionTags.insert(tag)
+                selectionTags.remove(tag)
+                scopeTags.remove(tag)
+                var resolvedTag = tag
+                resolvedTag.isPartiallyApplied = false
+                selectionTags.insert(resolvedTag)
+                scopeTags.insert(resolvedTag)
             case .remove:
                 selectionTags.remove(tag)
             case .delete:

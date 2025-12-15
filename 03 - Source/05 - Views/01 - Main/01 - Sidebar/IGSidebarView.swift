@@ -18,7 +18,6 @@ struct IGSidebar: View {
                 
             IGPhraseGroupsSection()
         }
-        /*
         .onChange(of: app.selectedContents) { old, new in
             app.selectedDetails = []
             if new.count > 1 {
@@ -32,7 +31,6 @@ struct IGSidebar: View {
                 }
             }
         }
-         */
         .listStyle(.sidebar)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

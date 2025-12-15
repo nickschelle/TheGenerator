@@ -36,12 +36,14 @@ enum IGTagActionType: String {
         }
     }
 
-    func resolve(for tag: IGTag, ignoring sourceID: UUID?) -> Self {
-        switch self {
-        case .add:
+    static func resolve(for tag: IGTempTag, isRemoving: Bool) -> Self {
+        if isRemoving {
+            if tag.isPartiallyApplied {
+                return .add
+            }
+            return tag.isShared ? .remove : .delete
+        } else {
             return .add
-        case .remove, .delete:
-            return tag.isTagging(ignoring: sourceID) ? .remove : .delete
         }
     }
 }

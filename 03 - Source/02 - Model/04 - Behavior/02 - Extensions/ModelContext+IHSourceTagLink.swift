@@ -21,6 +21,28 @@ extension ModelContext {
         )
         return try fetch(descriptor)
     }
+    
+    func tagLinks(for identities: Set<IGTaggableIdentity>) throws -> [IGSourceTagLink] {
+        guard !identities.isEmpty else { return [] }
+        
+        let scopes = Set(identities.map(\.tagScope))
+        precondition(scopes.count <= 1, "Mixed tag scopes are not supported")
+
+        guard let scope = scopes.first else { return [] }
+        let rawScope = scope.rawValue
+
+        let ids = Set(identities.map(\.id))
+        
+
+        let descriptor = FetchDescriptor<IGSourceTagLink>(
+            predicate: #Predicate { link in
+                ids.contains(link.sourceID) &&
+                link.rawSourceScope == rawScope
+            }
+        )
+
+        return try fetch(descriptor)
+    }
 
     func tagLinks(at scope: IGTagScope) throws -> [IGSourceTagLink] {
         let id = scope.id

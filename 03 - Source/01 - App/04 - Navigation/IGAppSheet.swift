@@ -12,6 +12,7 @@ enum IGAppSheet: Identifiable {
     case editGroup(IGGroup?)
     case ftpSignIn
     case editPhraseTags(IGPhrase, Set<IGTag>)
+    case editTags(Set<IGTaggableIdentity>, () -> Void)
 
     var id: String {
         switch self {
@@ -19,6 +20,7 @@ enum IGAppSheet: Identifiable {
         case .editGroup(let group): "editGroup-\(group?.id.uuidString ?? "")"
         case .ftpSignIn: "ftpSignIn"
         case .editPhraseTags(let phrase, _): "editPhraseTags-\(phrase.id.uuidString)"
+        case .editTags: "editTags"
         }
     }
 
@@ -30,6 +32,7 @@ enum IGAppSheet: Identifiable {
             IGGroupInfoSheet()
         case .editGroup(let group):
             IGGroupInfoSheet(group)
+        case .editTags(let selected, let onChange): IGBatchTagEditorSheet(selected, onChange: onChange)
         case .ftpSignIn: EmptyView()
             /*
             Form {
@@ -37,7 +40,7 @@ enum IGAppSheet: Identifiable {
             }
             .formStyle(.grouped)
              */
-        case .editPhraseTags(let phrase, let tags):
+        case .editPhraseTags://(let phrase, let tags):
             EmptyView()
             //IGPhraseTagEditor(for: phrase, tags: tags)
         }

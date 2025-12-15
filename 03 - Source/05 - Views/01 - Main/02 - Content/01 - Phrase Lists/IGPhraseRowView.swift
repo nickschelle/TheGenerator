@@ -80,7 +80,8 @@ struct IGPhraseRow: View {
                    */
                 .contextMenu {
                     IGEditPhraseButton(phrase)
-                    //IGPhraseGroupMenu(phrase)
+                    IGPhraseGroupMenu(phrase)
+                    IGEditTagsButton(phrase, selection: app.selectedPhrases)
                     IGDeletePhrasesButton(phrase)
                 }
             }

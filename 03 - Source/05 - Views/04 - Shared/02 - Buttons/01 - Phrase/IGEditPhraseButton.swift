@@ -21,11 +21,10 @@ struct IGEditPhraseButton: View {
         IGModelActionButton(
             phrase,
             selected: app.selectedPhrase,
-            actionTitle: "Edit Phrase",
+            actionTitle: "Edit",
             systemImage: "pencil",
             action: editPhrase
         )
-        //.disabled(!(phrase?.records.isEmpty ?? true))
     }
     
     func editPhrase(_ phrase: IGPhrase) {

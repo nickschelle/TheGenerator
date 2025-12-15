@@ -77,15 +77,11 @@ struct IGTagList: View {
         ) {
             ForEach(combinedTags) { tag in
                 if let action = onAction, !staticTags.contains(tag), !tag.isPreset {
-                    let mode: IGTagActionType =
-                        (onCreateTag != nil)
-                        ? (tag.isShared ? .remove : .delete)
-                        : .add
-
+                    let mode = IGTagActionType.resolve(for: tag, isRemoving: (onCreateTag != nil))
                     Button { action(tag, mode) } label: {
                         IGTagView(
                             tag.value,
-                            in: tag.scope.color,
+                            in: tag.scope.color.opacity(tag.isPartiallyApplied ? 0.5 : 1.0),
                             isPreset: tag.isPreset,
                             actionType:  mode
                         )

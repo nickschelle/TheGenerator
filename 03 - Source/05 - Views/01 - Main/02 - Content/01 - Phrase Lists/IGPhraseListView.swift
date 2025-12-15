@@ -70,9 +70,10 @@ struct IGPhraseList: View {
             ToolbarItemGroup(placement: .primaryAction) {
                 IGNewPhraseButton()
                 Menu("More", systemImage: "ellipsis") {
-                   IGEditPhraseButton()
-                    //IHPhraseGroupMenu()
-                   // IHPasteButton()
+                    IGEditPhraseButton()
+                    IGEditTagsButton(selection: app.selectedPhrases)
+                    IGPhraseGroupMenu()
+                    IGPasteButton()
                     IGDeletePhrasesButton()
                     Divider()
                     //IHSelectAllPhrases()
