@@ -16,7 +16,6 @@ struct IGPhraseList: View {
     }
     
     @Environment(IGAppModel.self) private var app
-    //@Environment(IHAppSettings.self) private var settings
     
     @Namespace private var phraseFocusScope
     @FocusState private var focus: focusedType?

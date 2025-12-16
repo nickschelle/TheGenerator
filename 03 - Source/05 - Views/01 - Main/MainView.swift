@@ -14,7 +14,7 @@ struct MainView: View {
     // MARK: - Environment & Bindings
 
     @Environment(IGAppModel.self) private var app
-    //@Environment(IHAppSettings.self) private var settings
+    @Environment(IGAppSettings.self) private var settings
     
     // MARK: - Body
 
@@ -46,7 +46,6 @@ struct MainView: View {
             actions: { app.confirmationContent.actions },
             message: { app.confirmationContent.message }
         )
-        /*
         .fileImporter(
             isPresented: $app.locationImportInProgress,
             allowedContentTypes: [.folder],
@@ -77,7 +76,6 @@ struct MainView: View {
             app.onLocationImportSuccess = nil
             app.onLocationImportFailure = nil
         }
-         */
     }
       
 }

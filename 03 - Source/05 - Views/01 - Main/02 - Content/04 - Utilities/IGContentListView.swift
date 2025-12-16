@@ -1,6 +1,6 @@
 //
 //  IGContentListView.swift
-//  IHeartEverything
+//  TheGenerator
 //
 //  Created by Nick Schelle on 2025-11-23.
 //
@@ -31,8 +31,6 @@ struct IGContentList<
         let itemsString = items.count == 1 ? "item" : "items"
         return countString + " " + itemsString
     }
-    
-    // MARK: - Init
 
     init(
         _ title: String,
@@ -47,8 +45,6 @@ struct IGContentList<
         self.forEachContent = forEachContent
         self.listContent = listContent()
     }
-
-    // MARK: - Body
 
     var body: some View {
         List(selection: $selection) {

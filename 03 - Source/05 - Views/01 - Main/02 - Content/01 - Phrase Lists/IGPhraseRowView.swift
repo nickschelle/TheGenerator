@@ -11,7 +11,7 @@ import SwiftData
 struct IGPhraseRow: View {
         
     @Environment(IGAppModel.self) private var app
-    //@Environment(IGAppSettings.self) private var settings
+    @Environment(IGAppSettings.self) private var settings
     
     @FocusState private var isFocused: Bool
     

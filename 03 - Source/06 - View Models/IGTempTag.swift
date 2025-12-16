@@ -77,14 +77,15 @@ extension IGTempTag {
         self.isPartiallyApplied = (matchStatus == .some)
     }
     
-    /*
-        init(from snapshot: IGTagSnapshot) {
-            self.value = snapshot.value
-            self.scope = snapshot.scope
-            self.isPreset = snapshot.isPreset
-            self.linkCount = 0
-        }
-    */
+
+    init(from snapshot: IGTagSnapshot) {
+        self.value = snapshot.value
+        self.scope = snapshot.scope
+        self.isPreset = snapshot.isPreset
+        self.linkCount = 0
+        self.isPartiallyApplied = false
+    }
+
     func getTag(
         persisting: Bool = false,
         in context: ModelContext

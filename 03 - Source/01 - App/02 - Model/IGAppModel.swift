@@ -87,16 +87,16 @@ final class IGAppModel {
     var isAddingPhrase: Bool = false
     /*
     var inspectorRecord: IHRecord?
-    
+    */
     var locationImportInProgress: Bool = false
     var onLocationImportSuccess: ((URL) -> Void)?
     var onLocationImportFailure: (() -> Void)?
     
     var ftpLoginInProgress: Bool = false
-    var onFTPLoginSuccess: ((IHFTPConfig) -> Void)?
+    var onFTPLoginSuccess: ((IGFTPConfig) -> Void)?
     var onFTPLoginFailure: (() -> Void)?
-
-    var generationState: IHImageGenerationState = .idle
+/*
+    var generationState: IGImageGenerationState = .idle
     var generationMessage: String?
     var generationProgress: Double?
     
