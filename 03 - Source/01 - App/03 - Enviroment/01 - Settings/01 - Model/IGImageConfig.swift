@@ -9,7 +9,7 @@ import Foundation
 
 struct IGImageConfig: Codable, Sendable, Equatable {
 
-   // var template: IHTemplateKey = .iHeartV1
+    //var template: IGTemplateKey = .iHeartV1
     //var fonts: [IHFont] = [.helveticaBold]
     //var colors: Set<IHColor> = [.black, .white]
     var width: Int = 4500

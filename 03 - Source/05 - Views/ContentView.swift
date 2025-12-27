@@ -67,7 +67,7 @@ struct ContentView: View {
     
     private func addPhrase() {
         do {
-            let phrase = try IGPhraseManager.newPhrase(newValue, in: context)
+            try IGPhraseManager.newPhrase(newValue, in: context)
             try context.save()
         } catch {
             print("Failed to add Phrase: \(error)")
