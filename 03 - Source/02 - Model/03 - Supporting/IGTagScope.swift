@@ -14,11 +14,10 @@ enum IGTagScope: String, CaseIterable {
     case defaults
     case group
     case phrase
-    case font
-    case color
+    case theme
     case size
     case metadata
-    case template
+    case design
     case snapshot
 }
 
@@ -27,14 +26,13 @@ extension IGTagScope {
     var precedence: Int {
         switch self {
         case .snapshot: 0
-        case .color:    1
-        case .font:     2
-        case .metadata: 3
-        case .size:     4
-        case .template: 5
-        case .defaults: 6
-        case .group:    7
-        case .phrase:   8
+        case .theme:    1
+        case .metadata: 2
+        case .size:     3
+        case .design:   4
+        case .defaults: 5
+        case .group:    6
+        case .phrase:   7
         }
     }
     

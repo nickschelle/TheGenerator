@@ -11,8 +11,3 @@ protocol IGTagPresetable {
     
     var presetTags: Set<IGTag> { get }
 }
-
-extension IGTagPresetable {
-    
-    var presetTags: Set<IGTag> { [] }
-}

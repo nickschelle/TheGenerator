@@ -9,12 +9,10 @@ import Foundation
 
 protocol IGDesignCache {
 
-    associatedtype Role: IGDesignRole
-    associatedtype Theme: IGDesignTheme
-        where Theme.Role == Role
+    associatedtype Theme: IGTheme
 
     var size: CGSize { get }
     var theme: Theme { get }
 
-    init(at size: CGSize, theme: Theme)
+    init(at size: CGSize, with theme: Theme)
 }

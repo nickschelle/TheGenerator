@@ -7,69 +7,76 @@
 
 import Cocoa
 
-protocol IGDesign: IGTagPresetable {
+protocol IGDesign {
 
-    associatedtype Role: IGDesignRole
-    associatedtype Theme: IGDesignTheme where Theme.Role == Role
-    associatedtype Cache: IGDesignCache where Cache.Role == Role, Cache.Theme == Theme
+    associatedtype Theme: IGTheme
+    associatedtype Cache: IGDesignCache where Cache.Theme == Theme
 
-    static var name: String { get }
-    static var version: Int { get }
+    static var baseName: String { get }
+    static var designVersion: Int { get }
     static var themes: [Theme] { get }
-    static func format(_ phrase: String) -> String
-    //static func title(from record: IHRecord) -> String
-    //static func description(from record: IHRecord) -> String
-    //static func fileName(from record: IHRecord) -> String
+    static var cache: Cache? { get set }
+    static var presetTags: Set<IGTag> { get }
+    
+    static func displayText(for phrase: String) -> String
+    //static func imageTitle(for record: IHRecord) -> String
+    //static func imageDescription(for record: IHRecord) -> String
+   // static func imageFilename(for record: IHRecord) -> String
+    
     static func drawLayout(
         phrase: String,
         theme: Theme,
         cache: Cache,
         in context: CGContext
     )
-    static var cache: Cache? { get set }
 }
 
 // MARK: - Default Implementations
 
+extension IGDesign where Theme: CaseIterable {
+
+    static var themes: [Theme] {
+        Array(Theme.allCases)
+    }
+}
+
 extension IGDesign {
-    
-    static var themes: [Theme] { Array(Theme.allCases) }
 
     static var id: String {
-        "\(name.capitalizedInitials)-\(String(format: "%03d", version))"
+        "\(baseName.capitalizedInitials)-\(String(format: "%03d", designVersion))"
     }
-    
+
     static var shortName: String {
-        "\(name.capitalizedInitials)"
+        baseName.capitalizedInitials
     }
 
     static var displayName: String {
-        "\(name) Version \(version)"
+        "\(baseName) V\(designVersion)"
     }
 
     static var presetTags: Set<IGTag> {
-        [IGTag(name, scope: .template, isPreset: true)]
+        [IGTag(baseName, scope: .design, isPreset: true)]
     }
     
-    static var presetOptionTags: Set<IGTag> {
+    static var presetThemeTags: Set<IGTag> {
         return Set(themes.flatMap(\.presetTags))
     }
 
     // MARK: - Record Metadata
 /*
     static func title(from record: IHRecord) -> String {
-        "\(format(record.phraseValue)) in \(record.color.displayName)"
+        "\(format(record.phraseValue)) in \(record.theme.displayName)"
     }
 
     static func description(from record: IHRecord) -> String {
-        "'\(format(record.phraseValue))' graphic with \(record.color.displayName)"
+        "'\(displayText(record.phraseValue))' graphic with \(record.color.displayName)"
     }
 
     static func fileName(from record: IHRecord) -> String {
         [
-            record.template.shortName,
+            record.design.shortName,
             record.phraseValue.pascalCased,
-            record.color.displayName
+            record.theme.displayName
             "\(record.width)x\(record.height)"
         ].joined(separator: "_")
     }
@@ -81,7 +88,7 @@ extension IGDesign {
         into externalContext: CGContext? = nil
     ) -> CGImage? {
         if cache?.size != size || cache?.theme.id != theme.id {
-            cache = Cache(at: size, theme: theme)
+            cache = Cache(at: size, with: theme)
         }
 
         guard let cache else {
