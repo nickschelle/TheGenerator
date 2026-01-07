@@ -19,6 +19,7 @@ protocol IGDesign {
     static var presetTags: Set<IGTag> { get }
     
     static func displayText(for phrase: String) -> String
+    static func resolveTheme(id: String) -> Theme?
     //static func imageTitle(for record: IHRecord) -> String
     //static func imageDescription(for record: IHRecord) -> String
    // static func imageFilename(for record: IHRecord) -> String
@@ -51,7 +52,7 @@ extension IGDesign {
     }
 
     static var displayName: String {
-        "\(baseName) V\(designVersion)"
+        "\(baseName)"
     }
 
     static var presetTags: Set<IGTag> {
@@ -60,6 +61,10 @@ extension IGDesign {
     
     static var presetThemeTags: Set<IGTag> {
         return Set(themes.flatMap(\.presetTags))
+    }
+    
+    static func resolveTheme(id: String) -> Theme? {
+        Theme.init(rawValue: id)
     }
 
     // MARK: - Record Metadata

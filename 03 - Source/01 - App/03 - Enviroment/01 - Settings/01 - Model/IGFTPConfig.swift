@@ -8,7 +8,7 @@
 import Foundation
 import Security
 
-struct IGFTPConfig: Codable, Sendable {
+struct IGFTPConfig: Codable {
     
     var host: String = "ftp.fineartamerica.com"
     var port: Int = 21

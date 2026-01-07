@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct IGMetadataConfig: Codable, Sendable, Equatable {
+struct IGMetadataConfig: Codable, Equatable {
 
     var author: String = "I ♥︎ Everything"
     var descriptionBlock: String = ""

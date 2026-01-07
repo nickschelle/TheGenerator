@@ -13,8 +13,8 @@ enum IHeartPhraseDesignV1: IGDesign {
     typealias Theme = IHeartPhraseTheme
     typealias Cache = IHeartPhraseCache
     
-    static var name: String { "I ♥ Phrase" }
-    static var version: Int { 1 }
+    static var baseName: String { "I ♥ Phrase" }
+    static var designVersion: Int { 1 }
     static var cache: Cache?
     
     static var presetTags: Set<IGTag> {
@@ -25,7 +25,7 @@ enum IHeartPhraseDesignV1: IGDesign {
         ]
     }
     
-    static func format(_ phrase: String) -> String {
+    static func displayText(for phrase: String) -> String {
         "I ♥ \(phrase)"
     }
     

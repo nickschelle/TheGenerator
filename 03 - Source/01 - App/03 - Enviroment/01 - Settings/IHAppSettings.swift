@@ -10,49 +10,33 @@ import Foundation
 @Observable
 final class IGAppSettings {
 
-    // MARK: - Stored Properties (Live Copies)
-
-    /// Live FTP settings (host, credentials, upload path, concurrency, etc.).
-    ///
-    /// Loaded from persistence at startup.
+    // MARK: - Stored Properties (Live Copies).
     var ftp: IGFTPConfig = .load()
-
-    /// Live image generation settings (dimensions, colors, fonts, template, etc.).
-    var image: IGImageConfig = .load()
-
-    /// Live security-scoped folder/bookmark settings for the output location.
+    var workspace: IGWorkspaceConfig = .load()
     var location: IGLocationConfig = .load()
-
-    /// Live metadata settings (author, keyword presets, description builder).
     var metadata: IGMetadataConfig = .load()
-    
     var defaultTags: IGDefaultTagsConfig = .load()
 
 
     // MARK: - Persistence
-
-    /// Saves FTP settings to persistence and refreshes the live observable value.
     @discardableResult
     func saveFTP() -> IGFTPConfig {
         ftp = ftp.save()
         return ftp
     }
 
-    /// Saves image generation settings and refreshes the observable copy.
     @discardableResult
-    func saveImage() -> IGImageConfig {
-        image = image.save()
-        return image
+    func saveWorkspace() -> IGWorkspaceConfig {
+        workspace = workspace.save()
+        return workspace
     }
 
-    /// Saves security-scoped folder settings and refreshes the observable copy.
     @discardableResult
     func saveLocation() -> IGLocationConfig {
         location = location.save()
         return location
     }
 
-    /// Saves metadata settings and refreshes the observable live value.
     @discardableResult
     func saveMetadata() -> IGMetadataConfig {
         metadata = metadata.save()
@@ -69,31 +53,25 @@ final class IGAppSettings {
         return defaultTags
     }
     
+    var presetTags: Set<IGTag> {
+        metadata.presetTags
+    }
+    
     func resetSettings() {
         ftp.deletePassword()
         ftp = IGFTPConfig()
-        image = IGImageConfig()
+        workspace = IGWorkspaceConfig()
         location = IGLocationConfig()
         metadata = IGMetadataConfig()
         defaultTags = IGDefaultTagsConfig()
 
         saveFTP()
-        saveImage()
+        saveWorkspace()
         saveLocation()
         saveMetadata()
         saveDefaultTags()
     }
-    
-    func allPresetTags(excludingTemplateOptions excludeTemplateOptions: Bool = false) -> Set<IGTag> {
-        var tags = image.presetTags.union(metadata.presetTags)
-        
-        if !excludeTemplateOptions {
-            tags.formUnion(image.presetTemplateOptionTags)
-        }
-        
-        return tags
-    }
-    
+
     var phraseAffectingDateModified: Date {
         max(metadata.dateModified, defaultTags.dateModified)
     }

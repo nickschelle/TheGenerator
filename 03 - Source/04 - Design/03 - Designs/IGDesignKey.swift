@@ -8,15 +8,15 @@
 import Foundation
 
 enum IGDesignKey: String, RawRepresentable, CaseIterable, Codable {
-    case iHeartPhraseV1
+    case iHeartPhrase
     
-    static var defaultValue: Self { .iHeartPhraseV1 }
+    static var defaultValue: Self { .iHeartPhrase }
 }
 
 extension IGDesignKey {
     var design: any IGDesign.Type {
         switch self {
-        case .iHeartPhraseV1: IHeartPhraseDesignV1.self
+        case .iHeartPhrase: IHeartPhraseDesignV1.self
         }
     }
     
@@ -25,11 +25,43 @@ extension IGDesignKey {
     var themes: [any IGTheme] { design.themes }
     var presetTags: Set<IGTag> { design.presetTags }
     
-    func format(_ phrase: String) -> String {
-        design.format(phrase)
+    func displayText(_ phrase: String) -> String {
+        design.displayText(for: phrase)
     }
 }
 
 extension IGDesignKey: Identifiable {
     var id: String { design.id }
+}
+
+extension IGDesignKey {
+    private var userDefaultsKey: String {
+        "com.iheart.config.image.\(rawValue)"
+    }
+
+    func loadConfig() -> IGDesignConfig {
+        guard
+            let data = UserDefaults.standard.data(forKey: userDefaultsKey),
+            let decoded = try? JSONDecoder().decode(IGDesignConfig.self, from: data)
+        else {
+            return IGDesignConfig(for: design)
+        }
+
+        return decoded
+    }
+
+    @discardableResult
+    func saveConfig(_ config: IGDesignConfig) -> IGDesignConfig {
+        var configToSave = config
+        configToSave.touch()
+
+        do {
+            let encoded = try JSONEncoder().encode(configToSave)
+            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
+        } catch {
+            print("⚠️ Failed to encode IGDesignConfig for \(self):", error)
+        }
+
+        return configToSave
+    }
 }

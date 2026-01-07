@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct IGLocationConfig: Codable, Sendable {
+struct IGLocationConfig: Codable {
 
     var bookmarkData: Data?
     var displayPath: String?

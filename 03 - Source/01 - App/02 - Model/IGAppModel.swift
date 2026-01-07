@@ -112,9 +112,9 @@ final class IGAppModel {
        // imageManager = IHImageManager()
     }
     
-    /*
+
     func ensureLocationAvailableOrImport(
-        using location: IHLocationConfig,
+        using location: IGLocationConfig,
         onSuccess: @escaping (URL) -> Void,
         onFailure: @escaping () -> Void
     ) {
@@ -131,8 +131,8 @@ final class IGAppModel {
     }
     
     func ensureFTPLoginAvailableOrPrompt(
-        using ftp: IHFTPConfig,
-        onSuccess: @escaping (IHFTPConfig) -> Void,
+        using ftp: IGFTPConfig,
+        onSuccess: @escaping (IGFTPConfig) -> Void,
         onFailure: @escaping () -> Void
     ) {
         // If credentials already exist, return immediately
@@ -150,7 +150,7 @@ final class IGAppModel {
         self.activeSheet = .ftpSignIn
     }
     
-    func completeFTPLogin(success ftp: IHFTPConfig? = nil) {
+    func completeFTPLogin(success ftp: IGFTPConfig? = nil) {
         if let ftp {
             onFTPLoginSuccess?(ftp)
         } else {
@@ -160,7 +160,6 @@ final class IGAppModel {
         onFTPLoginFailure = nil
         ftpLoginInProgress = false
     }
-     */
 }
 
 

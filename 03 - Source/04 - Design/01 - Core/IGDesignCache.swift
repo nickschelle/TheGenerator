@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol IGDesignCache {
+protocol IGDesignCache: Codable {
 
     associatedtype Theme: IGTheme
 

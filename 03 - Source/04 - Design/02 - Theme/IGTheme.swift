@@ -7,12 +7,16 @@
 
 import Foundation
 
-protocol IGTheme: Hashable, Identifiable, IGTagPresetable {
+protocol IGTheme:
+    Hashable,
+    Identifiable,
+    IGTagPresetable,
+    Codable,
+    RawRepresentable
+where RawValue == String {
     var displayName: String { get }
 }
 
-extension IGTheme
-where Self: RawRepresentable, RawValue == String {
-
+extension IGTheme {
     var id: String { rawValue }
 }

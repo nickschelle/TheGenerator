@@ -12,13 +12,14 @@ import SwiftData
 struct TheGeneratorApp: App {
     
     @State private var app = IGAppModel()
+    @State private var settings = IGAppSettings()
     
     var body: some Scene {
         Window("The Generator", id: "main") {
             MainView()
                 .modelContainer(app.container)
                 .environment(app)
-                //.environment(settings)
+                .environment(settings)
         }
         .windowResizability(.contentSize)
         .windowStyle(.titleBar)
@@ -26,5 +27,13 @@ struct TheGeneratorApp: App {
         .commands {
             // fill in later
         }
+        
+        Settings {
+            IGSettingsView()
+                .modelContainer(app.container)
+                .environment(app)
+                .environment(settings)
+        }
+        .windowResizability(.contentSize)
     }
 }

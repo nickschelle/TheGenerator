@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct IGDefaultTagsConfig: Codable, Equatable, Sendable {
+struct IGDefaultTagsConfig: Codable, Equatable {
 
     var dateModified: Date = .now
 
-    static let userDefaultsKey = "com.iheart.config.globalTags"
+    static let userDefaultsKey = "com.iheart.config.defaultTags"
 
     private enum CodingKeys: String, CodingKey {
         case dateModified

@@ -28,6 +28,11 @@ struct MainView: View {
             Text("Detail View")
             //IHDetailView()
         }
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                IGWorkspaceMenu()
+            }
+        }
         .sheet(item: $app.activeSheet) { sheet in
             sheet.view
         }
@@ -60,8 +65,8 @@ struct MainView: View {
 
                 if folder.startAccessingSecurityScopedResource() {
                     defer { folder.stopAccessingSecurityScopedResource() }
-                    settings.location = settings.location.withFolderURL(folder)
-                    settings.saveLocation()
+                   // settings.location = settings.location.withFolderURL(folder)
+                   // settings.saveLocation()
                     app.onLocationImportSuccess?(folder)
                 } else {
                     print("⚠️ Could not access folder")
