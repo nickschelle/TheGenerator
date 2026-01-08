@@ -16,6 +16,7 @@ struct IGPhraseList: View {
     }
     
     @Environment(IGAppModel.self) private var app
+    @Environment(IGAppSettings.self) private var settings
     
     @Namespace private var phraseFocusScope
     @FocusState private var focus: focusedType?
@@ -27,22 +28,57 @@ struct IGPhraseList: View {
     
     private let group: IGGroup?
     
-    init(for group: IGGroup? ) {
+    init(for group: IGGroup?) {
         self.group = group
     }
     
     var descriptor: FetchDescriptor<IGPhrase> {
-        if let groupID = group?.id {
-            return FetchDescriptor(predicate: #Predicate<IGPhrase> { phrase in
-                    phrase.groupLinks.contains(where: { link in
-                        link.group?.id == groupID
-                    })
+
+        // 1️⃣ Group + Design
+        if let groupID = group?.id, let designKey = settings.workspace.workspace.designKey {
+            return FetchDescriptor(
+                predicate: #Predicate<IGPhrase> { phrase in
+                    phrase.groupLinks.contains {
+                        $0.group?.id == groupID
+                    }
+                    &&
+                    phrase.designLinks.contains {
+                        $0.rawDesignKey == designKey.rawValue
+                    }
                 },
                 sortBy: []
             )
-        } else {
-            return FetchDescriptor(predicate: #Predicate<IGPhrase>{ _ in true }, sortBy: [])
         }
+
+        // 2️⃣ Group only
+        if let groupID = group?.id {
+            return FetchDescriptor(
+                predicate: #Predicate<IGPhrase> { phrase in
+                    phrase.groupLinks.contains {
+                        $0.group?.id == groupID
+                    }
+                },
+                sortBy: []
+            )
+        }
+
+        // 3️⃣ Design only
+        if let designKey = settings.workspace.workspace.designKey {
+            return FetchDescriptor(
+                predicate: #Predicate<IGPhrase> { phrase in
+                    phrase.designLinks.contains {
+                        $0.rawDesignKey == designKey.rawValue
+                    }
+                },
+                sortBy: []
+            )
+        }
+
+        // 4️⃣ No filters
+        return FetchDescriptor(
+            predicate: #Predicate<IGPhrase> { _ in true },
+            sortBy: []
+        )
     }
     
     var body: some View {

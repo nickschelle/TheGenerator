@@ -10,13 +10,14 @@ import SwiftUI
 struct IGSidebar: View {
     
     @Environment(IGAppModel.self) private var app
+    @Environment(IGAppSettings.self) private var settings
     
     var body: some View {
         @Bindable var app = app
         List(selection: $app.selectedContents) {
             //IHImageQueuesSection()
                 
-            IGPhraseGroupsSection()
+            IGPhraseGroupsSection(settings.workspace.workspace.designKey)
         }
         .onChange(of: app.selectedContents) { old, new in
             app.selectedDetails = []

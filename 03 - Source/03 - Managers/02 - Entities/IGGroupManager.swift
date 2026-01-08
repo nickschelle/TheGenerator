@@ -14,6 +14,7 @@ enum IGGroupManager {
     static func newGroup(
         _ rawName: String,
         with tags: Set<IGTempTag> = [],
+        design: IGDesignKey? = nil,
         in context: ModelContext
     ) throws -> Bool {
         
@@ -34,6 +35,10 @@ enum IGGroupManager {
             for: group,
             in: context
         )
+        
+        if let design {
+            design.connect([group], in: context)
+        }
 
         return true
     }

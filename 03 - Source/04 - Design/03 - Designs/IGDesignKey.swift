@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 enum IGDesignKey: String, RawRepresentable, CaseIterable, Codable {
     case iHeartPhrase
@@ -63,5 +64,133 @@ extension IGDesignKey {
         }
 
         return configToSave
+    }
+    
+    static func connect(
+        _ groups: [IGGroup],
+        to keys: [IGDesignKey],
+        in context: ModelContext
+    ) {
+        guard !groups.isEmpty, !keys.isEmpty else { return }
+        
+        for group in groups {
+            
+            for key in keys {
+                let alreadyLinked = group.designLinks.contains {
+                    $0.designKey == key
+                }
+                if alreadyLinked { continue }
+                
+                let link = IGGroupDesignLink(
+                    group,
+                    designKey: key
+                )
+                context.insert(link)
+            }
+            
+            group.touch()
+        }
+    }
+    
+    func connect(
+        _ groups: [IGGroup],
+        in context: ModelContext
+    ) {
+        IGDesignKey.connect(groups, to: [self], in: context)
+    }
+    
+    static func disconnect(
+        _ groups: some Collection<IGGroup>,
+        from keys: some Collection<IGDesignKey>,
+        in context: ModelContext
+    ) {
+        guard !groups.isEmpty, !keys.isEmpty else { return }
+
+        let keySet = Set(keys)
+
+        for group in groups {
+            let linksToRemove = group.designLinks.filter {
+                keySet.contains($0.designKey)
+            }
+
+            guard !linksToRemove.isEmpty else { continue }
+
+            for link in linksToRemove {
+                context.delete(link)
+            }
+
+            group.touch()
+        }
+    }
+    
+    func disconnect(
+        _ groups: [IGGroup],
+        in context: ModelContext
+    ) {
+        IGDesignKey.disconnect(groups, from: [self], in: context)
+    }
+    
+    static func connect(
+        _ phrases: [IGPhrase],
+        to keys: [IGDesignKey],
+        in context: ModelContext
+    ) {
+        guard !phrases.isEmpty, !keys.isEmpty else { return }
+        
+        for phrase in phrases {
+            
+            for key in keys {
+                let alreadyLinked = phrase.designLinks.contains {
+                    $0.designKey == key
+                }
+                if alreadyLinked { continue }
+                
+                let link = IGPhraseDesignLink(
+                    phrase,
+                    designKey: key
+                )
+                context.insert(link)
+            }
+            
+            phrase.touch()
+        }
+    }
+    
+    func connect(
+        _ phrases: [IGPhrase],
+        in context: ModelContext
+    ) {
+        IGDesignKey.connect(phrases, to: [self], in: context)
+    }
+    
+    static func disconnect(
+        _ phrases: some Collection<IGPhrase>,
+        from keys: some Collection<IGDesignKey>,
+        in context: ModelContext
+    ) {
+        guard !phrases.isEmpty, !keys.isEmpty else { return }
+
+        let keySet = Set(keys)
+
+        for phrase in phrases {
+            let linksToRemove = phrase.designLinks.filter {
+                keySet.contains($0.designKey)
+            }
+
+            guard !linksToRemove.isEmpty else { continue }
+
+            for link in linksToRemove {
+                context.delete(link)
+            }
+
+            phrase.touch()
+        }
+    }
+    
+    func disconnect(
+        _ phrases: [IGPhrase],
+        in context: ModelContext
+    ) {
+        IGDesignKey.disconnect(phrases, from: [self], in: context)
     }
 }

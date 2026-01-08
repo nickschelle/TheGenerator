@@ -122,6 +122,9 @@ struct IGPhraseRow: View {
                 if let group {
                     IGGroupManager.add([newPhrase], to: [group], in: app.context)
                 }
+                if let design = settings.workspace.workspace.designKey {
+                    design.connect([newPhrase], in: app.context)
+                }
             }
             
             try app.context.save()

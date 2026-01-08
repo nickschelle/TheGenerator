@@ -11,6 +11,7 @@ import SwiftData
 struct IGGroupInfoSheet: View {
 
     @Environment(IGAppModel.self) private var app
+    @Environment(IGAppSettings.self) private var settings
     @Environment(\.dismiss) private var dismiss
 
     @State private var isShowingDuplicateAlert = false
@@ -93,6 +94,7 @@ struct IGGroupInfoSheet: View {
                 wasCreatedOrUpdated = try IGGroupManager.newGroup(
                     tempName,
                     with: tempTags,
+                    design: settings.workspace.workspace.designKey,
                     in: app.context
                 )
             }
@@ -120,8 +122,10 @@ struct IGGroupInfoSheet: View {
 
 #Preview {
     @Previewable @State var app: IGAppModel = .init()
+    @Previewable @State var settings: IGAppSettings = .init()
     @Previewable @State var group: IGGroup?
     
     IGGroupInfoSheet(group)
         .environment(app)
+        .environment(settings)
 }

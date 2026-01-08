@@ -11,8 +11,10 @@ enum IGAppSchemaV1: VersionedSchema {
     static var versionIdentifier = Schema.Version(1, 0, 0)
     static var models: [any PersistentModel.Type] {[
         IGPhrase.self,
+        IGPhraseDesignLink.self,
         IGRecord.self,
         IGGroup.self,
+        IGGroupDesignLink.self,
         IGGroupPhraseLink.self,
         IGTag.self,
         IGSourceTagLink.self

@@ -16,7 +16,8 @@ typealias IGRecord = IGAppSchemaV1.IGRecord
 
 typealias IGGroupPhraseLink = IGAppSchemaV1.IGGroupPhraseLink
 typealias IGSourceTagLink = IGAppSchemaV1.IGSourceTagLink
-
+typealias IGPhraseDesignLink = IGAppSchemaV1.IGPhraseDesignLink
+typealias IGGroupDesignLink = IGAppSchemaV1.IGGroupDesignLink
 
 
 

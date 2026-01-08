@@ -12,21 +12,37 @@ struct IGGroupSidebarItem: View {
     
     @Environment(IGAppModel.self) private var app
 
-    @Query var links: [IGGroupPhraseLink]
+    @Query var phrases: [IGPhrase]
     
     @State private var isHovered: Bool = false
     @State private var showMenuPopover = false
     
     private let group: IGGroup
     
-    init(_ group: IGGroup) {
+    init(_ group: IGGroup, designKey: IGDesignKey? = nil) {
         self.group = group
         let groupID = group.id
-        _links = Query(filter: #Predicate<IGGroupPhraseLink> { $0.group?.id == groupID })
+        if let rawKey = designKey?.rawValue {
+            _phrases = Query(filter: #Predicate<IGPhrase> { phrase in
+                phrase.groupLinks.contains {
+                    $0.group?.id == groupID
+                }
+                &&
+                phrase.designLinks.contains {
+                    $0.rawDesignKey == rawKey
+                }
+            })
+        } else {
+            _phrases = Query(filter: #Predicate<IGPhrase> { phrase in
+                phrase.groupLinks.contains {
+                    $0.group?.id == groupID
+                }
+            })
+        }
     }
     
     var body: some View {
-        IGSidebarItem(group.name, systemImage: "rectangle.stack", count: links.count)
+        IGSidebarItem(group.name, systemImage: "rectangle.stack", count: phrases.count)
         .contextMenu {
             if app.selectedGroups.isEmpty {
                 IGEditGroupButton(group)

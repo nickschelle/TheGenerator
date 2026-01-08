@@ -28,6 +28,11 @@ struct MainView: View {
             Text("Detail View")
             //IHDetailView()
         }
+        .onChange(of: settings.workspace.workspace) {
+            app.selectedContents = [.allPhrases]
+            app.phraseToEdit = nil
+            app.isAddingPhrase = false
+        }
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 IGWorkspaceMenu()

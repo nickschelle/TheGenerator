@@ -23,6 +23,9 @@ extension IGAppSchemaV1 {
         @Relationship(deleteRule: .cascade, inverse: \IGGroupPhraseLink.group)
         var phraseLinks: [IGGroupPhraseLink] = []
         
+        @Relationship(deleteRule: .cascade, inverse: \IGGroupDesignLink.group)
+        var designLinks: [IGGroupDesignLink] = []
+        
         init(
             _ name: String,
             id: UUID = UUID(),

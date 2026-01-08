@@ -13,18 +13,26 @@ struct IGPhraseGroupsSection: View {
     @Environment(IGAppModel.self) private var app
     
     @Query private var groups: [IGGroup]
+    private let designKey: IGDesignKey?
     
-    init() {
-        _groups = Query(
-            sort: [SortDescriptor<IGGroup>(\.name)])
+    init(_ designKey: IGDesignKey? = nil) {
+        self.designKey = designKey
+        if let designKey {
+            let rawKey = designKey.rawValue
+            _groups = Query(filter: #Predicate<IGGroup> { group in
+                group.designLinks.contains { $0.rawDesignKey == rawKey}
+            }, sort: [SortDescriptor<IGGroup>(\.name)])
+        } else {
+            _groups = Query(sort: [SortDescriptor<IGGroup>(\.name)])
+        }
     }
     
     var body: some View {
         Section(header: Text("Phrase Groups")) {
-            IGAllPhrasesSidebarItem().tag(IGContentSelection.allPhrases)
+            IGAllPhrasesSidebarItem(designKey: designKey).tag(IGContentSelection.allPhrases)
             
             ForEach(groups) { group in
-                IGGroupSidebarItem(group)
+                IGGroupSidebarItem(group, designKey: designKey)
                     .tag(IGContentSelection.group(group))
             }
         }
