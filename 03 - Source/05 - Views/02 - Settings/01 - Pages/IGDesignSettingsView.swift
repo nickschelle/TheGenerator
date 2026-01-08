@@ -9,27 +9,44 @@ import SwiftUI
 
 struct IGDesignSettings: View {
     
-    @Environment(IGAppModel.self) private var app
+    @Environment(IGAppSettings.self) private var settings
     @Environment(\.dismiss) private var dismiss
     
     @State private var tempConfig: IGDesignConfig
+    private let designKey: IGDesignKey
+    private let themes: [any IGTheme]
     
-    private let design: IGDesignKey
-    
-    init(_ design: IGDesignKey) {
-        self.design = design
-        self._tempConfig = State(initialValue: design.loadConfig())
+    init(_ designKey: IGDesignKey) {
+        self.designKey = designKey
+        self._tempConfig = State(initialValue: designKey.loadConfig())
+        self.themes = designKey.themes
     }
     
     var body: some View {
-        Section("\(design.displayName)") {
+        Section("\(designKey.displayName)") {
             TextField("Width", value: $tempConfig.width, format: .number)
                 .textFieldStyle(.roundedBorder)
             TextField("Height", value: $tempConfig.height, format: .number)
                 .textFieldStyle(.roundedBorder)
         }
+        Section("Themes") {
+            ForEach(themes, id: \.id) { theme in
+                Toggle(theme.displayName, isOn: Binding(
+                    get: {
+                        tempConfig.activeThemeIDs.contains(theme.id)
+                    },
+                    set: { isOn in
+                        if isOn {
+                            tempConfig.activeThemeIDs.insert(theme.id)
+                        } else {
+                            tempConfig.activeThemeIDs.remove(theme.id)
+                        }
+                    }
+                ))
+            }
+        }
         .onAppear{
-            tempConfig = design.loadConfig()
+            tempConfig = designKey.loadConfig()
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -39,7 +56,7 @@ struct IGDesignSettings: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save", role: .confirm) {
-                    design.saveConfig(tempConfig)
+                    settings.saveDesign(tempConfig, for: designKey)
                     dismiss()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -49,8 +66,8 @@ struct IGDesignSettings: View {
 }
 
 #Preview {
-    @Previewable @State var app: IGAppModel = .init()
+    @Previewable @State var settings: IGAppSettings = .init()
     
-    IGMetadataSettings()
-        .environment(app)
+    IGDesignSettings(IGDesignKey.iHeartPhrase)
+        .environment(settings)
 }

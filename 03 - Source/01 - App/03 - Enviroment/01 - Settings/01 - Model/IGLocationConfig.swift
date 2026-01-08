@@ -13,7 +13,7 @@ struct IGLocationConfig: Codable {
     var displayPath: String?
     var dateModified: Date = .now
 
-    static let userDefaultsKey = "com.iheart.config.location"
+    static let userDefaultsKey = "com.theGenerator.config.location"
     static let subfolderName = "I Heart Images"
 
     var resolvedURL: URL? {

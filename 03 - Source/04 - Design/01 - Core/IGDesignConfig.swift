@@ -9,7 +9,7 @@ import Foundation
 
 struct IGDesignConfig: Codable, Sendable, Equatable, IGValueDateStampable {
 
-    var activeThemeIDs: [String] = [] {
+    var activeThemeIDs: Set<String> = [] {
         didSet {
             if activeThemeIDs != oldValue { touch() }
         }
@@ -27,7 +27,7 @@ struct IGDesignConfig: Codable, Sendable, Equatable, IGValueDateStampable {
     var dateModified: Date = .now
     
     init<Design: IGDesign>(for design: Design.Type) {
-        self.activeThemeIDs = design.themes.map(\.rawValue)
+        self.activeThemeIDs = Set(design.themes.map(\.rawValue))
         self.width = 4500
         self.height = 4500
         self.dateModified = .now

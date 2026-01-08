@@ -20,7 +20,7 @@ struct IGWorkspaceConfig: Codable {
 
     // MARK: - Persistence
 
-    static let userDefaultsKey = "com.iheart.config.workspace"
+    static let userDefaultsKey = "com.theGenerator.config.workspace"
 
     static func load() -> Self {
         guard

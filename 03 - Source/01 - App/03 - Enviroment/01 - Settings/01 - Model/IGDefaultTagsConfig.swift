@@ -11,7 +11,7 @@ struct IGDefaultTagsConfig: Codable, Equatable {
 
     var dateModified: Date = .now
 
-    static let userDefaultsKey = "com.iheart.config.defaultTags"
+    static let userDefaultsKey = "com.theGenerator.config.defaultTags"
 
     private enum CodingKeys: String, CodingKey {
         case dateModified

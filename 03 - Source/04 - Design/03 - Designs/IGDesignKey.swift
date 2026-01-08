@@ -36,7 +36,7 @@ extension IGDesignKey: Identifiable {
 
 extension IGDesignKey {
     private var userDefaultsKey: String {
-        "com.iheart.config.image.\(rawValue)"
+        "com.theGenerator.config.image.\(rawValue)"
     }
 
     func loadConfig() -> IGDesignConfig {

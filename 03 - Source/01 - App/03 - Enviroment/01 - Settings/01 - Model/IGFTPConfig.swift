@@ -23,7 +23,7 @@ struct IGFTPConfig: Codable {
         Self.loadPassword(for: passwordKeychainID) != nil
     }
 
-    static let userDefaultsKey = "com.iheart.config.ftp"
+    static let userDefaultsKey = "com.theGenerator.config.ftp"
     
     private enum CodingKeys: String, CodingKey {
         case host, port, useTLS, username, remoteBasePath, maxConcurrentUploads, passwordKeychainID

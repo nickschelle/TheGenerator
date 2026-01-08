@@ -16,6 +16,18 @@ final class IGAppSettings {
     var location: IGLocationConfig = .load()
     var metadata: IGMetadataConfig = .load()
     var defaultTags: IGDefaultTagsConfig = .load()
+    var designConfigs: [IGDesignKey: IGDesignConfig] = [:]
+    
+    init() {
+        self.ftp = IGFTPConfig.load()
+        self.workspace = IGWorkspaceConfig.load()
+        self.location = IGLocationConfig.load()
+        self.metadata = IGMetadataConfig.load()
+        self.defaultTags = IGDefaultTagsConfig.load()
+        IGDesignKey.allCases.forEach { key in
+            designConfigs[key] = key.loadConfig()
+        }
+    }
 
 
     // MARK: - Persistence
@@ -51,6 +63,15 @@ final class IGAppSettings {
     func saveDefaultTags() -> IGDefaultTagsConfig {
         defaultTags = defaultTags.save()
         return defaultTags
+    }
+    
+    func designConfig(for key: IGDesignKey) -> IGDesignConfig {
+        designConfigs[key] ?? IGDesignConfig(for: key.design)
+    }
+
+    func saveDesign(_ config: IGDesignConfig, for key: IGDesignKey) {
+        designConfigs[key] = config
+        key.saveConfig(config)
     }
     
     var presetTags: Set<IGTag> {

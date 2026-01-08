@@ -13,7 +13,7 @@ struct IGMetadataConfig: Codable, Equatable {
     var descriptionBlock: String = ""
     var dateModified: Date = .now
     
-    static let userDefaultsKey = "com.iheart.config.metadata"
+    static let userDefaultsKey = "com.theGenerator.config.metadata"
 
     static func load() -> Self {
         let data = MainActor.assumeIsolated {

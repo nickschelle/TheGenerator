@@ -36,13 +36,13 @@ struct IGSettingsView: View {
         Form {
             Section("Designs") {
                 ForEach(IGDesignKey.allCases) { key in
-                    let designConfig: IGDesignConfig = key.loadConfig()
+                    let designConfig = settings.designConfig(for: key)
                     IGSettingsRowView(
                         key.displayName,
                         subtitle: "\(designConfig.displayActiveThemeCount(for:  key.design)) Themes at \(designConfig.displaySize)",
                         systemName: "rectangle.3.group.fill",
                         color: .accentColor,
-                        action: { selectedSetting = .template }
+                        action: { selectedSetting = .design(key) }
                     )
                 }
             }
@@ -108,7 +108,6 @@ struct IGSettingsView: View {
                     }
                 )
             }
-          //  IGSettingsAdmin()
         }
         .formStyle(.grouped)
         .onAppear {
@@ -157,35 +156,6 @@ struct IGSettingsView: View {
             completion(true)
         }
     }
-    
-    private func eraseAllModels() {
-        do {
-            try app.context.delete(model: IGPhrase.self)
-            try app.context.delete(model: IGGroup.self)
-            try app.context.delete(model: IGRecord.self)
-            try app.context.delete(model: IGTag.self)
-            try app.context.delete(model: IGGroupPhraseLink.self)
-            try app.context.delete(model: IGSourceTagLink.self)
-
-            try app.context.save()
-            print("🧹 Successfully erased all models.")
-        } catch {
-            print("⚠️ Failed to erase models:", error)
-        }
-        
-    }
-    /*
-    private func resetSettingsToDefaults() {
-        let settingsTags = app.context.tags(at: .defaults)
-        for tag in settingsTags {
-            app.context.delete(tag)
-        }
-        try? app.context.save()
-        settings.resetSettings()
-        
-        print("🔄 Settings have been reset to factory defaults.")
-    }
-     */
 }
 
 #Preview {
@@ -197,16 +167,23 @@ struct IGSettingsView: View {
         .environment(settings)
 }
 
-enum selectedSettings: String, Identifiable {
-    case template, dimensions, metadata, tags, ftpConnection, ftpSignIn
+enum selectedSettings: Identifiable {
+    case design(IGDesignKey), metadata, tags, ftpConnection, ftpSignIn
     
-    var id: String { rawValue }
+    var id: String {
+        switch self {
+        case .design(let key): "design: \(key.rawValue)"
+        case .metadata: "metadata"
+        case .tags: "tags"
+        case .ftpConnection: "ftpConnection"
+        case .ftpSignIn: "ftpSignIn"
+        }
+    }
     
     @ViewBuilder
     var view: some View {
         switch self {
-        case .template: Text("Template")//IHTemplateSettings()
-        case .dimensions: Text("dimensions") //IHDimensionsSettings()
+        case .design(let key): IGDesignSettings(key)
         case .metadata: IGMetadataSettings()
         case .tags: IGDefaultTagSettings()
         case .ftpConnection: IGFTPConnectionSettings()
