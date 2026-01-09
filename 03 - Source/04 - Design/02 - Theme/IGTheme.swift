@@ -15,6 +15,7 @@ protocol IGTheme:
     RawRepresentable
 where RawValue == String {
     var displayName: String { get }
+    static var defaultTheme: Self { get }
 }
 
 extension IGTheme {

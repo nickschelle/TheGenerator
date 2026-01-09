@@ -42,6 +42,14 @@ extension IGDesign where Theme: CaseIterable {
 }
 
 extension IGDesign {
+    
+    static var defaultTheme: Theme {
+        Theme.defaultTheme
+    }
+    
+    static func theme(rawValue: String) -> Theme? {
+        Theme(rawValue: rawValue)
+    }
 
     static var id: String {
         "\(baseName.capitalizedInitials)-\(String(format: "%03d", designVersion))"

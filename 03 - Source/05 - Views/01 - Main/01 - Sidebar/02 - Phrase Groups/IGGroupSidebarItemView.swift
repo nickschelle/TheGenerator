@@ -44,7 +44,7 @@ struct IGGroupSidebarItem: View {
     var body: some View {
         IGSidebarItem(group.name, systemImage: "rectangle.stack", count: phrases.count)
         .contextMenu {
-            if app.selectedGroups.isEmpty {
+            if (app.selectedGroups.count == 1 && app.selectedGroups.contains(group)) || !app.selectedGroups.contains(group) {
                 IGEditGroupButton(group)
             } else {
                 IGEditTagsButton(selection: app.selectedGroups)

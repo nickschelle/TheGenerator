@@ -21,6 +21,7 @@ extension IGDesignKey {
         }
     }
     
+    var defaultTheme: any IGTheme { design.defaultTheme }
     var displayName: String { design.displayName }
     var shortName: String { design.shortName }
     var themes: [any IGTheme] { design.themes }
@@ -28,6 +29,10 @@ extension IGDesignKey {
     
     func displayText(_ phrase: String) -> String {
         design.displayText(for: phrase)
+    }
+    
+    func theme(rawValue: String) -> (any IGTheme)? {
+        design.theme(rawValue: rawValue)
     }
 }
 

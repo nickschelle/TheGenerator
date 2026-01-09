@@ -11,6 +11,10 @@ enum IHeartPhraseTheme: String, IGTheme, CaseIterable {
     case classicOnLight
     case classicOnDark
     
+    static var defaultTheme: Self {
+        .classicOnLight
+    }
+    
     var displayName: String {
         switch self {
         case .classicOnLight:

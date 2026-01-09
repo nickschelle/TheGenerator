@@ -22,6 +22,9 @@ extension IGAppSchemaV1 {
         private(set) var revisionMap: [String: Int] = [:]
         private(set) var uploadMap: [String: Int] = [:]
         
+        @Relationship(deleteRule: .cascade, inverse: \IGRecord.phrase)
+        var records: [IGRecord] = []
+        
         @Relationship(deleteRule: .cascade, inverse: \IGGroupPhraseLink.phrase)
         var groupLinks: [IGGroupPhraseLink] = []
         

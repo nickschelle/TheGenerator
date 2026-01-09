@@ -14,7 +14,66 @@ extension IGAppSchemaV1 {
     final class IGRecord {
         
         var id: UUID = UUID()
+        var phraseValue: String = "Undefined"
+        var author: String = "Undefined"
+        var rawDesign: String = IGDesignKey.defaultValue.rawValue
+        var rawTheme: String = IGDesignKey.defaultValue.design.defaultTheme.rawValue
+        var width: Int = 0
+        var height: Int = 0
+        var tagSnapshots: [IGTagSnapshot] = []
+        var revision: Int = 0
+        var appInfo: IGAppInfo = IGAppInfo.defaultValue
+        var rawStatus: String = IGRecordStatus.defaultValue.rawValue
         
-        init() { }
+        var failedMessage: String? = nil
+        var dateCreated: Date = Date.now
+
+        var dateRendered: Date? = nil
+        var renderDuration: TimeInterval? = nil
+
+        var dateUploaded: Date? = nil
+        var uploadDuration: TimeInterval? = nil
+        
+        @Relationship(deleteRule: .nullify)
+        var phrase: IGPhrase?
+        
+        init(
+            phrase: IGPhrase? = nil,
+            author: String = "Undefined",
+            tags: any Collection<IGTag> = [],
+            design: IGDesignKey = .defaultValue,
+            theme: any IGTheme = IGDesignKey.defaultValue.design.defaultTheme,
+            width: Int = 0,
+            height: Int = 0,
+            id: UUID = UUID(),
+            revision: Int = 0,
+            appInfo: IGAppInfo = .defaultValue,
+            status: IGRecordStatus = .defaultValue,
+            failedMessage: String? = nil,
+            dateCreated: Date = .now,
+            dateRendered: Date? = nil,
+            renderDuration: TimeInterval? = nil,
+            dateUploaded: Date? = nil,
+            uploadDuration: TimeInterval? = nil
+        ) {
+            self.id = id
+            self.phrase = phrase
+            self.phraseValue = phrase?.value ?? "Undefined"
+            self.author = author
+            self.rawDesign = design.rawValue
+            self.rawTheme = theme.rawValue
+            self.width = width
+            self.height = height
+            self.revision = revision
+            self.appInfo = appInfo
+            self.rawStatus = status.rawValue
+            self.failedMessage = failedMessage
+            self.dateCreated = dateCreated
+            self.dateRendered = dateRendered
+            self.renderDuration = renderDuration
+            self.dateUploaded = dateUploaded
+            self.uploadDuration = uploadDuration
+            self.tagSnapshots = tags.map { IGTagSnapshot(from: $0) }
+        }
     }
 }
