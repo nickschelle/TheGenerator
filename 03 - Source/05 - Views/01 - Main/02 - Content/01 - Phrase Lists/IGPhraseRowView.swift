@@ -68,7 +68,7 @@ struct IGPhraseRow: View {
                 }
             } else {
                 IGContentRow(
-                    phrase?.value ?? "",//settings.image.template.format(phrase?.value ?? ""),
+                    settings.workspace.workspace.designKey?.displayText(phrase?.value ?? "") ?? (phrase?.value ?? ""),
                     systemImage: "heart.text.square"
                 ) /*{
                     
