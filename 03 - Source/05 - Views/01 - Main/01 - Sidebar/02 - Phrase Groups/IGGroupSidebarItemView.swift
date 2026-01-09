@@ -49,8 +49,10 @@ struct IGGroupSidebarItem: View {
             } else {
                 IGEditTagsButton(selection: app.selectedGroups)
             }
+            
             IGDeleteGroupsButton(group)
-           
+            Divider()
+            IGGroupDesignMenu(group)
         }
     }
 }

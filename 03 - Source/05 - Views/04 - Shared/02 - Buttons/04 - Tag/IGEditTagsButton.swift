@@ -10,7 +10,6 @@ import SwiftData
 
 struct IGEditTagsButton<T: IGTaggable & IGDateStampable>: View {
     @Environment(IGAppModel.self) private var app
-    // @Environment(IGAppSettings.self) private var settings
     
     private let item: T?
     private let selection: Set<T>
@@ -20,19 +19,11 @@ struct IGEditTagsButton<T: IGTaggable & IGDateStampable>: View {
         self.selection = selection
     }
     
-    var deleteConfirmation: IGConfirmationContent {
-        IGConfirmationContent(
-            confirmTitle: "Delete", confirmRole: .destructive, message: {
-                Text("Any linked Image Records will be deleted as well.")
-            }
-        )
-    }
-    
     var body: some View {
         IGModelActionButton(
             item,
             selection: selection,
-            systemImage: "trash",
+            systemImage: "tag.fill",
             titleBuilder: { _ in
                 "Edit Tags"
             },

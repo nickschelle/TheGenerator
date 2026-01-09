@@ -21,7 +21,7 @@ enum IGDetailSelection: Equatable, Hashable, Identifiable {
     var phrase: IGPhrase? {
         switch self {
         case .phrase(let phrase): phrase
-        default: nil
+        //default: nil
         }
     }
     /*

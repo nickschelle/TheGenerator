@@ -111,6 +111,8 @@ struct IGPhraseList: View {
                     IGPasteButton()
                     IGDeletePhrasesButton()
                     Divider()
+                    IGPhraseDesignMenu()
+                    Divider()
                     //IHSelectAllPhrases()
                     Divider()
                    // IHAddToRenderQueueButton()

@@ -83,6 +83,8 @@ struct IGPhraseRow: View {
                     IGPhraseGroupMenu(phrase)
                     IGEditTagsButton(phrase, selection: app.selectedPhrases)
                     IGDeletePhrasesButton(phrase)
+                    Divider()
+                    IGPhraseDesignMenu(phrase)
                 }
             }
         }

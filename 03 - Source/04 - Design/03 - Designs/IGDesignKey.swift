@@ -67,8 +67,8 @@ extension IGDesignKey {
     }
     
     static func connect(
-        _ groups: [IGGroup],
-        to keys: [IGDesignKey],
+        _ groups: some Collection<IGGroup>,
+        to keys: some Collection<IGDesignKey>,
         in context: ModelContext
     ) {
         guard !groups.isEmpty, !keys.isEmpty else { return }
@@ -93,7 +93,7 @@ extension IGDesignKey {
     }
     
     func connect(
-        _ groups: [IGGroup],
+        _ groups: some Collection<IGGroup>,
         in context: ModelContext
     ) {
         IGDesignKey.connect(groups, to: [self], in: context)
@@ -124,15 +124,15 @@ extension IGDesignKey {
     }
     
     func disconnect(
-        _ groups: [IGGroup],
+        _ groups: some Collection<IGGroup>,
         in context: ModelContext
     ) {
         IGDesignKey.disconnect(groups, from: [self], in: context)
     }
     
     static func connect(
-        _ phrases: [IGPhrase],
-        to keys: [IGDesignKey],
+        _ phrases: some Collection<IGPhrase>,
+        to keys: some Collection<IGDesignKey>,
         in context: ModelContext
     ) {
         guard !phrases.isEmpty, !keys.isEmpty else { return }
@@ -157,7 +157,7 @@ extension IGDesignKey {
     }
     
     func connect(
-        _ phrases: [IGPhrase],
+        _ phrases: some Collection<IGPhrase>,
         in context: ModelContext
     ) {
         IGDesignKey.connect(phrases, to: [self], in: context)
@@ -188,7 +188,7 @@ extension IGDesignKey {
     }
     
     func disconnect(
-        _ phrases: [IGPhrase],
+        _ phrases: some Collection<IGPhrase>,
         in context: ModelContext
     ) {
         IGDesignKey.disconnect(phrases, from: [self], in: context)
