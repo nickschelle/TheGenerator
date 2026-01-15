@@ -85,6 +85,8 @@ struct IGPhraseRow: View {
                     IGDeletePhrasesButton(phrase)
                     Divider()
                     IGPhraseDesignMenu(phrase)
+                    Divider()
+                    IGAddToRenderQueueButton(phrase)
                 }
             }
         }

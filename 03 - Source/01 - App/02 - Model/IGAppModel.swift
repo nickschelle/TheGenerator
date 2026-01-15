@@ -66,20 +66,18 @@ final class IGAppModel {
         selectedDetail?.phrase
     }
     
-    /*
-    var selectedRecords: Set<IHRecord> {
+    var selectedRecords: Set<IGRecord> {
         get {
             Set(selectedDetails.compactMap(\.record))
         }
         set {
-            selectedDetails = Set(newValue.map { IHDetailSelection.record($0) })
+            selectedDetails = Set(newValue.map { IGDetailSelection.record($0) })
         }
     }
     
-    var selectedRecord: IHRecord? {
+    var selectedRecord: IGRecord? {
         selectedDetail?.record
     }
-     */
     
     var detailPath: NavigationPath = NavigationPath()
     

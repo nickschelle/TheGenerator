@@ -15,7 +15,7 @@ struct IGSidebar: View {
     var body: some View {
         @Bindable var app = app
         List(selection: $app.selectedContents) {
-            //IHImageQueuesSection()
+            IGImageQueuesSection()
                 
             IGPhraseGroupsSection(settings.workspace.workspace.designKey)
         }

@@ -20,9 +20,9 @@ protocol IGDesign {
     
     static func displayText(for phrase: String) -> String
     static func resolveTheme(id: String) -> Theme?
-    //static func imageTitle(for record: IHRecord) -> String
-    //static func imageDescription(for record: IHRecord) -> String
-   // static func imageFilename(for record: IHRecord) -> String
+    static func imageTitle(for record: IGRecord) -> String
+    static func imageDescription(for record: IGRecord) -> String
+    static func imageFilename(for record: IGRecord) -> String
     
     static func drawLayout(
         phrase: String,
@@ -74,26 +74,23 @@ extension IGDesign {
     static func resolveTheme(id: String) -> Theme? {
         Theme.init(rawValue: id)
     }
-
-    // MARK: - Record Metadata
-/*
-    static func title(from record: IHRecord) -> String {
-        "\(format(record.phraseValue)) in \(record.theme.displayName)"
+    
+    static func imageTitle(for record: IGRecord) -> String {
+        "\(displayText(for: record.phraseValue)) in \(record.theme.displayName)"
     }
-
-    static func description(from record: IHRecord) -> String {
-        "'\(displayText(record.phraseValue))' graphic with \(record.color.displayName)"
+    
+    static func imageDescription(for record: IGRecord) -> String {
+        "'\(displayText(for: record.phraseValue))' graphic in \(record.theme.displayName) theme."
     }
-
-    static func fileName(from record: IHRecord) -> String {
+    static func imageFilename(for record: IGRecord) -> String {
         [
             record.design.shortName,
             record.phraseValue.pascalCased,
-            record.theme.displayName
+            record.theme.displayName,
             "\(record.width)x\(record.height)"
         ].joined(separator: "_")
     }
-*/
+
     static func render(
         _ phrase: String,
         at size: CGSize,

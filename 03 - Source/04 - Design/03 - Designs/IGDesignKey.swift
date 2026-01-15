@@ -25,7 +25,14 @@ extension IGDesignKey {
     var displayName: String { design.displayName }
     var shortName: String { design.shortName }
     var themes: [any IGTheme] { design.themes }
-    var presetTags: Set<IGTag> { design.presetTags }
+    
+    func presetTags(using theme: (any IGTheme)? = nil) -> Set<IGTag> {
+        let designTags = design.presetTags
+        if let theme, !theme.presetTags.isEmpty {
+            return designTags.union(theme.presetTags)
+        }
+        return designTags
+    }
     
     func displayText(_ phrase: String) -> String {
         design.displayText(for: phrase)
@@ -33,6 +40,17 @@ extension IGDesignKey {
     
     func theme(rawValue: String) -> (any IGTheme)? {
         design.theme(rawValue: rawValue)
+    }
+    
+    func imageTitle(for record: IGRecord) -> String {
+        design.imageTitle(for: record)
+    }
+    
+    func imageDescription(for record: IGRecord) -> String {
+        design.imageDescription(for: record)
+    }
+    func imageFilename(for record: IGRecord) -> String {
+        design.imageFilename(for: record)
     }
 }
 

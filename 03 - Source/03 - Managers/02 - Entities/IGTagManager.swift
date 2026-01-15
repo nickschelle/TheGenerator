@@ -324,4 +324,49 @@ enum IGTagManager {
             return lhs.value.localizedCompare(rhs.value) == .orderedAscending
         }
     }
+    
+    static func associatedPresetTags(
+        for phrase: IGPhrase,
+        with settings: IGAppSettings
+    ) -> Set<IGTag> {
+
+        let phrasePreset = phrase.presetTags
+
+        let groupPreset = phrase.groupLinks
+            .compactMap { $0.group?.presetTags }
+            .reduce(into: Set<IGTag>()) { $0.formUnion($1) }
+        
+        let settingTags = settings.presetTags
+
+        return settingTags
+                .union(groupPreset)
+                .union(phrasePreset)
+    }
+    
+    static func associatedCustomTagsFilter(for phrase: IGPhrase, sortBy: [SortDescriptor<IGSourceTagLink>] = []) -> FetchDescriptor<IGSourceTagLink> {
+        var relevantIDs: Set<UUID> = [
+            phrase.id,
+            IGTagScope.defaults.id
+        ]
+
+        let groupIDs = phrase.groupLinks.compactMap(\.group?.id)
+        relevantIDs.formUnion(groupIDs)
+        
+        let predicate = #Predicate<IGSourceTagLink> { link in
+            relevantIDs.contains(link.sourceID)
+        }
+        
+        return FetchDescriptor<IGSourceTagLink>(
+            predicate: predicate,
+            sortBy: sortBy
+        )
+    }
+    
+    static func associatedCustomTags(for phrase: IGPhrase, sortBy: [SortDescriptor<IGSourceTagLink>] = [], in context: ModelContext) throws -> [IGTag] {
+        
+        let descriptor = associatedCustomTagsFilter(for: phrase, sortBy: sortBy)
+        let links = try context.fetch(descriptor)
+        
+        return links.compactMap(\.tag)
+    }
 }

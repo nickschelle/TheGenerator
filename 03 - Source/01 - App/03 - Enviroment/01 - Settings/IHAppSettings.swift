@@ -29,7 +29,6 @@ final class IGAppSettings {
         }
     }
 
-
     // MARK: - Persistence
     @discardableResult
     func saveFTP() -> IGFTPConfig {
@@ -75,7 +74,7 @@ final class IGAppSettings {
     }
     
     var presetTags: Set<IGTag> {
-        metadata.presetTags
+        metadata.presetTags.union(workspace.workspace.designKey?.presetTags() ?? [])
     }
     
     func resetSettings() {

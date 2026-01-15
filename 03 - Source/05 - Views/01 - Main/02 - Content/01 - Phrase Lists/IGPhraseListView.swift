@@ -115,7 +115,7 @@ struct IGPhraseList: View {
                     Divider()
                     //IHSelectAllPhrases()
                     Divider()
-                   // IHAddToRenderQueueButton()
+                    IGAddToRenderQueueButton()
                 }
                 .menuIndicator(.hidden)
             }

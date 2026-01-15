@@ -17,8 +17,8 @@ struct IGContentView: View {
                 switch selectedItem {
                 case .allPhrases: IGPhraseList(for: nil)
                 case .group(let group): IGPhraseList(for: group)
-                case .renderQueue: Text("Render") //IHRenderQueue()
-                case .uploadQueue: Text("Upload") //IHUploadQueue()
+                case .renderQueue: IGRenderQueue()
+                case .uploadQueue: IGUploadQueue()
                 }
             } else if app.selectedContents.count > 1 {
                 Text("Multiple groups selected")

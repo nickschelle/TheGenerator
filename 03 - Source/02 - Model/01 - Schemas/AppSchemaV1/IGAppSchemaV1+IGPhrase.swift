@@ -19,8 +19,8 @@ extension IGAppSchemaV1 {
         var dateCreated: Date = Date.now
         var dateModified: Date = Date.now
         
-        private(set) var revisionMap: [String: Int] = [:]
-        private(set) var uploadMap: [String: Int] = [:]
+        var revisionMap: [String: Int] = [:]
+        var uploadMap: [String: Int] = [:]
         
         @Relationship(deleteRule: .cascade, inverse: \IGRecord.phrase)
         var records: [IGRecord] = []

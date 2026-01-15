@@ -11,6 +11,32 @@ extension IGPhrase {
     var groups: [IGGroup] {
         groupLinks.compactMap(\.group)
     }
+    
+    var designKeys: Set<IGDesignKey> {
+        Set(designLinks.map(\.designKey))
+    }
+    
+    func stepRevision(for key: IHRecordKey) {
+        let id = key.rawID
+        revisionMap[id] = pendingRevision(for: key)
+    }
+
+    func latestRevision(for key: IHRecordKey) -> Int {
+        revisionMap[key.rawID] ?? -1
+    }
+
+    func pendingRevision(for key: IHRecordKey) -> Int {
+        latestRevision(for: key) + 1
+    }
+    
+    func updateUpload(for key: IHRecordKey) {
+        let latest = latestRevision(for: key)
+        uploadMap[key.rawID] = latest
+    }
+
+    func latestUpload(for key: IHRecordKey) -> Int? {
+        uploadMap[key.rawID]
+    }
 }
 
 extension IGPhrase: IGTagPresetable {
