@@ -16,7 +16,6 @@ final class IGAppModel {
     // MARK: - Core Data Stack
     let container: ModelContainer
     let context: ModelContext
-    //let imageManager: IHImageManager
     
     var appError: IGAppError?
     
@@ -93,21 +92,19 @@ final class IGAppModel {
     var ftpLoginInProgress: Bool = false
     var onFTPLoginSuccess: ((IGFTPConfig) -> Void)?
     var onFTPLoginFailure: (() -> Void)?
-/*
+
     var generationState: IGImageGenerationState = .idle
     var generationMessage: String?
     var generationProgress: Double?
     
-    var uploadState: IHImageUploadState = .idle
+    var uploadState: IGImageUploadState = .idle
     var uploadMessage: String?
     var uploadProgress: Double?
-     */
      
     // MARK: - Init
     init(inMemory: Bool = false) {
         container = IGModelContainerManager.makeContainer()
         context = container.mainContext
-       // imageManager = IHImageManager()
     }
     
 

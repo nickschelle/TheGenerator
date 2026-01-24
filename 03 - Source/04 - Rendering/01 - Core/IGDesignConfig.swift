@@ -34,23 +34,19 @@ struct IGDesignConfig: Codable, Sendable, Equatable, IGValueDateStampable {
     }
     
     func displayValues<Design: IGDesign>(for design: Design.Type) -> String {
-        let themes = activeThemeIDs
-            .compactMap { design.resolveTheme(id: $0)?.displayName }
-            .joined(separator: ", ")
+        let themes = displayActiveThemes(for: design)
 
         return "\(width)px × \(height)px | \(themes)"
     }
-}
 
-extension IGDesignConfig {
     var displaySize: String {
         "\(width)px × \(height)px"
     }
     
     func displayActiveThemes<Design: IGDesign>(for design: Design.Type) -> String {
         activeThemeIDs
-            .compactMap { design.resolveTheme(id: $0)?.displayName }
-            .joined(separator: ", ")
+           .compactMap { try? design.theme(rawValue: $0).displayName }
+           .joined(separator: ", ")
     }
     
     func displayActiveThemeCount<Design: IGDesign>(for design: Design.Type) -> String {

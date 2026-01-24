@@ -14,12 +14,12 @@ struct IGDesignSettings: View {
     
     @State private var tempConfig: IGDesignConfig
     private let designKey: IGDesignKey
-    private let themes: [any IGTheme]
+    private let themes: [any IGDesignTheme]
     
     init(_ designKey: IGDesignKey) {
         self.designKey = designKey
         self._tempConfig = State(initialValue: designKey.loadConfig())
-        self.themes = designKey.themes
+        self.themes = designKey.design.themes
     }
     
     var body: some View {

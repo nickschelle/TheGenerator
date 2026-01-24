@@ -11,29 +11,29 @@ struct IHRecordKey: Hashable, Identifiable, CustomStringConvertible, Comparable 
 
     init(from record: IGRecord) {
         self.designKey = record.design
-        self.themeID = record.theme.id
+        self.themeID = record.rawTheme
     }
 
-    init(designKey: IGDesignKey, theme: any IGTheme) {
+    init(designKey: IGDesignKey, theme: any IGDesignTheme) {
         self.designKey = designKey
         self.themeID = theme.id
     }
-
-    var theme: any IGTheme {
-        designKey.design.resolveTheme(id: themeID) ?? designKey.design.defaultTheme
+/*
+    var theme: any IGDesignTheme {
+        designKey.design.theme(rawValue: themeID) ?? designKey.design.defaultTheme
     }
-
+*/
     var rawID: String {
         "\(designKey.rawValue)-\(themeID)"
     }
 
     var id: String { rawID }
-    var description: String { displayValue() }
-
+    var description: String { rawID } // } displayValue() }
+/*
     func displayValue(includeDesign: Bool = true) -> String {
         (includeDesign ? "\(designKey.displayName) " : "") + theme.displayName
     }
-
+*/
     static func < (lhs: Self, rhs: Self) -> Bool {
         (lhs.designKey.rawValue, lhs.themeID) < (rhs.designKey.rawValue, rhs.themeID)
     }

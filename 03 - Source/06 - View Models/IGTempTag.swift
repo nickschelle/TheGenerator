@@ -36,6 +36,7 @@ extension IGTempTag {
     
     var isShared: Bool { linkCount > 0 }
     
+    @MainActor
     init(
         from tag: IGTag,
         ignoring sourceID: UUID? = nil,
@@ -55,6 +56,7 @@ extension IGTempTag {
         self.isPartiallyApplied = false
     }
     
+    @MainActor
     init(
         from tag: IGTag,
         evalutating sourceIDs: Set<UUID>
@@ -86,6 +88,7 @@ extension IGTempTag {
         self.isPartiallyApplied = false
     }
 
+    @MainActor
     func getTag(
         persisting: Bool = false,
         in context: ModelContext
@@ -117,7 +120,7 @@ extension IGTempTag: Identifiable {
     var id: String { value }
 }
 
-extension IGTempTag: Hashable{
+extension IGTempTag: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(value)
         hasher.combine(scope)

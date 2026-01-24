@@ -15,14 +15,29 @@ extension IGRecord {
         set { rawDesign = newValue.rawValue }
     }
     
-    var theme: any IGTheme {
-        get { design.theme(rawValue: rawTheme) ?? design.defaultTheme }
+    var theme: any IGDesignTheme {
+        get {
+            do {
+                return try design.design.theme(rawValue: rawTheme)
+            } catch {
+                return design.design.defaultTheme
+            }
+        }
         set { rawTheme = newValue.rawValue }
     }
     
     var status: IGRecordStatus {
         get { IGRecordStatus(rawValue: rawStatus) ?? .defaultValue }
         set { rawStatus = newValue.rawValue }
+    }
+    
+    var appInfo: IGAppInfo {
+        get { IGAppInfo(name: rawAppName, version: rawAppVersion, build: rawAppBuild) }
+        set {
+            rawAppName = newValue.name
+            rawAppVersion = newValue.version
+            rawAppBuild = newValue.build
+        }
     }
     
     var key: IHRecordKey {
@@ -58,15 +73,20 @@ extension IGRecord {
     }
     
     var title: String {
-        design.imageTitle(for: self)
+        "\(design.displayText(phraseValue)) in \(theme.displayName)"
     }
 
     var descriptionText: String {
-        design.imageDescription(for: self)
+        "'\(design.displayText(phraseValue))' graphic in \(theme.displayName) theme."
     }
 
     var fileName: String {
-        design.imageFilename(for: self)
+        [
+            design.shortName,
+            phraseValue.pascalCased,
+            theme.displayName,
+            "\(width)x\(height)"
+        ].joined(separator: "_")
     }
 
     var versionInfo: String {

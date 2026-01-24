@@ -13,7 +13,7 @@ enum IGGroupManager {
     @discardableResult
     static func newGroup(
         _ rawName: String,
-        with tags: Set<IGTempTag> = [],
+        with tags: [IGTempTag] = [],
         design: IGDesignKey? = nil,
         in context: ModelContext
     ) throws -> Bool {

@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct IGAppInfo {
+struct IGAppInfo: Sendable, Codable, Hashable {
 
     let name: String
     let version: String
     let build: String
-    
+
     var fullVersion: String {
         "\(version) (\(build))"
     }
@@ -27,13 +27,12 @@ struct IGAppInfo {
         self.build = build
     }
     
-    static var defaultValue: IGAppInfo { IGAppInfo(name: "Undefined", version: "", build: "") }
+    static let defaultValue: IGAppInfo = IGAppInfo(name: "Undefined", version: "", build: "")
 }
 
-extension IGAppInfo: Hashable, Codable { }
-
 enum IGAppInfoSnapshot {
-
+    
+    @MainActor
     static func current() -> IGAppInfo {
         let bundle = Bundle.main
 

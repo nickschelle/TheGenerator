@@ -35,13 +35,13 @@ struct IGRecordManager {
             
             let customTags = try IGTagManager.associatedCustomTags(for: phrase, in: context)
             
-            var associatedTags = presetTags.union(customTags)
+            let associatedTags = presetTags.union(customTags)
             
             for designKey in phraseDesignKeys {
                 
                 let designConfig = settings.designConfigs[designKey] ?? designKey.loadConfig()
                 
-                let themes = designKey.themes.filter {
+                let themes = designKey.design.themes.filter {
                     designConfig.activeThemeIDs.contains($0.id)
                 }
                 
@@ -49,8 +49,8 @@ struct IGRecordManager {
                     
                     let key = IHRecordKey(designKey: designKey, theme: theme)
 
-                    associatedTags.formUnion(designKey.presetTags(using: theme))
-                    let cleanedTags = IGTagManager.dedupeByPriority(associatedTags)
+                    let recodTags = associatedTags.union(designKey.presetTags(using: theme))
+                    let cleanedTags = IGTagManager.dedupeByPriority(recodTags)
                     
                     let revision = phrase.pendingRevision(for: key)
                     

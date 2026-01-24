@@ -7,14 +7,15 @@
 
 import Foundation
 
-enum IHeartPhraseTheme: String, IGTheme, CaseIterable {
+
+enum IHeartPhraseTheme: String, IGDesignTheme, RawRepresentable {
     case classicOnLight
     case classicOnDark
     
     static var defaultTheme: Self {
         .classicOnLight
     }
-    
+
     var displayName: String {
         switch self {
         case .classicOnLight:
@@ -24,7 +25,7 @@ enum IHeartPhraseTheme: String, IGTheme, CaseIterable {
         }
     }
     
-    var presetTags: Set<IGTag> {
+    @MainActor var presetTags: Set<IGTag> {
         let common: [IGTag] = [
             IGTag("Red Heart", scope: .theme, isPreset: true),
             IGTag("Helvetica", scope: .theme, isPreset: true)

@@ -1,5 +1,5 @@
 //
-//  IGTheme.swift
+//  IGDesignTheme.swift
 //  TheGenerator
 //
 //  Created by Nick Schelle on 2025-12-17.
@@ -7,17 +7,16 @@
 
 import Foundation
 
-protocol IGTheme:
-    Hashable,
-    Identifiable,
-    IGTagPresetable,
-    Codable,
-    RawRepresentable
+protocol IGDesignTheme: RawRepresentable, CaseIterable, Hashable
 where RawValue == String {
     var displayName: String { get }
     static var defaultTheme: Self { get }
+    @MainActor var presetTags: Set<IGTag> { get }
 }
 
-extension IGTheme {
+extension IGDesignTheme {
     var id: String { rawValue }
 }
+
+
+

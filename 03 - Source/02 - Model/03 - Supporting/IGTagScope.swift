@@ -40,6 +40,7 @@ extension IGTagScope {
 
 extension IGTagScope {
     
+    @MainActor
     var color: Color {
         switch self {
         case .defaults: .blue
@@ -54,6 +55,7 @@ extension IGTagScope {
     
     static var defaultValue: Self { defaults }
 
+    @MainActor
     func hasTag(_ tag: IGTag) -> Bool {
         tag.links.contains {
             $0.sourceID == self.id &&

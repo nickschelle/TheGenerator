@@ -9,14 +9,12 @@ import Foundation
 import Cocoa
 
 enum IHeartPhraseDesignV1: IGDesign {
-
+ 
     typealias Theme = IHeartPhraseTheme
-    typealias Cache = IHeartPhraseCache
     
-    static var baseName: String { "I ♥ Phrase" }
-    static var designVersion: Int { 1 }
-    static var cache: Cache?
-    
+    static let baseName: String = "I ♥ Phrase"
+    static let designVersion: Int = 1
+   
     static var presetTags: Set<IGTag> {
         [
             IGTag("I ♥", scope: .design, isPreset: true),
@@ -30,11 +28,11 @@ enum IHeartPhraseDesignV1: IGDesign {
     }
     
     static func drawLayout(
-        phrase: String,
-        theme: Theme,
-        cache: Cache,
-        in context: CGContext
+        of phrase: String,
+        with theme: Theme,
+        into context: CGContext
     ) {
         
     }
 }
+

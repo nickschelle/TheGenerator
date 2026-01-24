@@ -30,25 +30,15 @@ struct IGQueue: View {
             forEachContent: { record in
                 NavigationLink(value: IGDetailSelection.record(record)) {
                     IGContentRow(record.title, systemImage: "photo") {
-                        //IGRecordStatusView(record)
+                        IGRecordStatusView(record)
+                        Text(record.fileName)
                     }
                     .contextMenu {
-                        //IGDeleteRecordsButton(record)
+                        IGDeleteRecordsButton(record)
                     }
                 }
             }
         )
-        .toolbar {
-            ToolbarItemGroup {
-                //IHRenderImagesButton()
-                Menu("More", systemImage: "ellipsis") {
-                    //IHDeleteRecordsButton()
-                    Divider()
-                    //IHSelectAllRecords(.render)
-                }
-                .menuIndicator(.hidden)
-            }
-        }
     }
 }
 

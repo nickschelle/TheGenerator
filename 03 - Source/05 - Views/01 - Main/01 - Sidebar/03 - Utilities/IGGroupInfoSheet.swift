@@ -93,7 +93,7 @@ struct IGGroupInfoSheet: View {
             } else {
                 wasCreatedOrUpdated = try IGGroupManager.newGroup(
                     tempName,
-                    with: tempTags,
+                    with: Array(tempTags),
                     design: settings.workspace.workspace.designKey,
                     in: app.context
                 )

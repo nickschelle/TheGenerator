@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreGraphics
 import SwiftData
 
 enum IGDesignKey: String, RawRepresentable, CaseIterable, Codable {
@@ -21,12 +22,7 @@ extension IGDesignKey {
         }
     }
     
-    var defaultTheme: any IGTheme { design.defaultTheme }
-    var displayName: String { design.displayName }
-    var shortName: String { design.shortName }
-    var themes: [any IGTheme] { design.themes }
-    
-    func presetTags(using theme: (any IGTheme)? = nil) -> Set<IGTag> {
+    func presetTags(using theme: (any IGDesignTheme)? = nil) -> Set<IGTag> {
         let designTags = design.presetTags
         if let theme, !theme.presetTags.isEmpty {
             return designTags.union(theme.presetTags)
@@ -34,23 +30,28 @@ extension IGDesignKey {
         return designTags
     }
     
+    var shortName: String {
+        design.shortName
+    }
+    
+    var displayName: String {
+        design.displayName
+    }
+    
+    var themes: [any IGDesignTheme] {
+        design.themes
+    }
+    
     func displayText(_ phrase: String) -> String {
         design.displayText(for: phrase)
     }
     
-    func theme(rawValue: String) -> (any IGTheme)? {
-        design.theme(rawValue: rawValue)
-    }
-    
-    func imageTitle(for record: IGRecord) -> String {
-        design.imageTitle(for: record)
-    }
-    
-    func imageDescription(for record: IGRecord) -> String {
-        design.imageDescription(for: record)
-    }
-    func imageFilename(for record: IGRecord) -> String {
-        design.imageFilename(for: record)
+    func renderImage(
+        of phrase: String,
+        at size: CGSize,
+        with rawTheme: String
+    ) throws -> CGImage {
+        try design.renderImage(of: phrase, at: size, with: rawTheme)
     }
 }
 

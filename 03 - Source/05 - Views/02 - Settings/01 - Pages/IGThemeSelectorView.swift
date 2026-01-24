@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct IGThemeSelectorView<Theme: IGTheme>: View {
+struct IGThemeSelectorView<Theme: IGDesignTheme>: View {
     
     @Binding private var selection: Set<String>
     private var themes: [Theme]
@@ -21,7 +21,7 @@ struct IGThemeSelectorView<Theme: IGTheme>: View {
     
     var body: some View {
         List(selection: $selection) {
-            ForEach(themes) { theme in
+            ForEach(themes, id: \.id) { theme in
                 Text(theme.displayName).tag(theme.id)
             }
         }

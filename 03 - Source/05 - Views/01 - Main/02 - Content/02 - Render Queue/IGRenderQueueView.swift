@@ -18,6 +18,17 @@ struct IGRenderQueue: View {
                 $0.dateRendered == nil
             }
         )
+        .toolbar {
+            ToolbarItemGroup {
+                IGRenderImagesButton()
+                Menu("More", systemImage: "ellipsis") {
+                    IGDeleteRecordsButton()
+                    Divider()
+                    //IHSelectAllRecords(.render)
+                }
+                .menuIndicator(.hidden)
+            }
+        }
     }
 }
 

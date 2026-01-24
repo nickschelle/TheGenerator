@@ -22,7 +22,9 @@ extension IGAppSchemaV1 {
         var height: Int = 0
         var tagSnapshots: [IGTagSnapshot] = []
         var revision: Int = 0
-        var appInfo: IGAppInfo = IGAppInfo.defaultValue
+        var rawAppName: String = IGAppInfo.defaultValue.name
+        var rawAppVersion: String = IGAppInfo.defaultValue.version
+        var rawAppBuild: String = IGAppInfo.defaultValue.build
         var rawStatus: String = IGRecordStatus.defaultValue.rawValue
         
         var failedMessage: String? = nil
@@ -42,7 +44,7 @@ extension IGAppSchemaV1 {
             author: String = "Undefined",
             tags: any Collection<IGTag> = [],
             design: IGDesignKey = .defaultValue,
-            theme: any IGTheme = IGDesignKey.defaultValue.design.defaultTheme,
+            theme: any IGDesignTheme = IGDesignKey.defaultValue.design.defaultTheme,
             width: Int = 0,
             height: Int = 0,
             id: UUID = UUID(),
@@ -65,7 +67,9 @@ extension IGAppSchemaV1 {
             self.width = width
             self.height = height
             self.revision = revision
-            self.appInfo = appInfo
+            self.rawAppName = appInfo.name
+            self.rawAppVersion = appInfo.version
+            self.rawAppBuild = appInfo.build
             self.rawStatus = status.rawValue
             self.failedMessage = failedMessage
             self.dateCreated = dateCreated
