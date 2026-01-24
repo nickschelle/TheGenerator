@@ -11,7 +11,7 @@ import SwiftData
 struct IGDeletePhrasesButton: View {
     
     @Environment(IGAppModel.self) private var app
-   // @Environment(IGAppSettings.self) private var settings
+    @Environment(IGAppSettings.self) private var settings
     
     private let phrase: IGPhrase?
     
@@ -40,7 +40,7 @@ struct IGDeletePhrasesButton: View {
     
     private func delete(_ phrases: any Collection<IGPhrase>) {
         do {
-            try IGPhraseManager.deletePhrases(phrases, /*with: settings,*/ in: app.context)
+            try IGPhraseManager.deletePhrases(phrases, with: settings, in: app.context)
             try app.context.save()
             if try IGTagManager.cleanOrphanTags(in: app.context) > 0 {
                 try app.context.save()

@@ -71,7 +71,7 @@ enum IGPhraseManager {
     
     static func deletePhrases(
         _ phrases: some Collection<IGPhrase>,
-        //with settings: IGAppSettings,
+        with settings: IGAppSettings,
         in context: ModelContext
     ) throws {
         for phrase in phrases {
@@ -79,9 +79,7 @@ enum IGPhraseManager {
                 context.delete(link)
                 link.group?.touch()
             }
-            /*
-            IGRecordManager.deleteRecords(phrase.records, with: settings, in: context)
-             */
+            try IGRecordManager.deleteRecords(phrase.records, with: settings, in: context)
 
             try IGTagManager.updateTags(to: Set<IGTag>(), for: phrase, in: context)
 

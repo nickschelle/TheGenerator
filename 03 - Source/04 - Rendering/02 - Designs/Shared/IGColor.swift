@@ -38,6 +38,7 @@ struct IGColor {
 extension IGColor {
     static var black: Self { IGColor("black", red: 0, green: 0, blue: 0) }
     static var white: Self { IGColor("white", red: 1, green: 1, blue: 1) }
+    static var red: Self { IGColor("red", red: 1, green: 0, blue: 0) }
 }
 
 extension IGColor: Hashable { }
@@ -55,6 +56,7 @@ extension IGColor: Identifiable {
 }
 
 extension IGColor {
+    @MainActor
     var swiftUIColor: Color {
         Color(red: red, green: green, blue: blue, opacity: alpha)
     }

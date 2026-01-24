@@ -70,8 +70,8 @@ struct MainView: View {
 
                 if folder.startAccessingSecurityScopedResource() {
                     defer { folder.stopAccessingSecurityScopedResource() }
-                   // settings.location = settings.location.withFolderURL(folder)
-                   // settings.saveLocation()
+                    settings.location = settings.location.withFolderURL(folder)
+                    settings.saveLocation()
                     app.onLocationImportSuccess?(folder)
                 } else {
                     print("⚠️ Could not access folder")

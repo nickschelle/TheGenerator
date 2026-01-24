@@ -18,10 +18,27 @@ enum IHeartPhraseTheme: String, IGDesignTheme, RawRepresentable {
 
     var displayName: String {
         switch self {
-        case .classicOnLight:
-            return "Classic for Light Backgrounds"
-        case .classicOnDark:
-            return "Classic for Dark Backgrounds"
+        case .classicOnLight: "Classic for Light Backgrounds"
+        case .classicOnDark: "Classic for Dark Backgrounds"
+        }
+    }
+    
+    var textColor: IGColor {
+        switch self {
+        case .classicOnLight: .black
+        case .classicOnDark: .white
+        }
+    }
+    
+    var textFont: IGFont {
+        switch self {
+        default : .helveticaBold
+        }
+    }
+    
+    var heartColor: IGColor {
+        switch self {
+        default : .red
         }
     }
     
