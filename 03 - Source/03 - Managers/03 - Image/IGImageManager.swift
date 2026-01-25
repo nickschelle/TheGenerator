@@ -17,148 +17,150 @@ enum IGImageManager {
         in app: IGAppModel,
         using folderURL: URL
     ) async {
-        
-        actor RenderProgress {
-            private var completed = 0
-            let total: Int
-            
-            init(total: Int) {
-                self.total = total
-            }
-            
-            func increment() -> Double {
-                completed += 1
-                return Double(completed) / Double(total)
-            }
-            
-            var count: Int { completed }
-        }
-        
+
         let total = records.count
         guard total > 0 else { return }
-        
-        let batchStart = Date()
-        let progress = RenderProgress(total: total)
-        
-        await MainActor.run {
-            app.generationState = .rendering
-            app.generationMessage = "Rendering \(total) images..."
-            app.generationProgress = 0.0
-        }
-        
+
         guard folderURL.startAccessingSecurityScopedResource() else {
             await MainActor.run {
                 app.generationState = .failed
-                app.generationMessage = "❌ Could not access security-scoped folder."
+                app.appError = .renderFailure(
+                    "The selected output folder could not be accessed. Please reselect it and try again."
+                )
                 app.generationProgress = nil
             }
             return
         }
-        
-        defer { folderURL.stopAccessingSecurityScopedResource() }
-        
+
+        defer {
+            folderURL.stopAccessingSecurityScopedResource()
+        }
+
+        let batchStart = Date()
+        let progress = ProgressTracker(total: total)
+
+        await MainActor.run {
+            app.generationState = .rendering
+            app.generationMessage = "Rendering \(total) images…"
+            app.generationProgress = 0.0
+        }
+
         let maxConcurrentRenders =
-        max(2, ProcessInfo.processInfo.activeProcessorCount - 1)
-        
+            max(2, ProcessInfo.processInfo.activeProcessorCount - 1)
+
         await withTaskGroup(of: Void.self) { group in
             var iterator = records.makeIterator()
-            
-            // Seed initial tasks
+
             for _ in 0..<maxConcurrentRenders {
                 if let record = iterator.next() {
                     group.addTask {
-                        await render(record)
+                        await render(
+                            record,
+                            app: app,
+                            folderURL: folderURL,
+                            progress: progress
+                        )
                     }
                 }
             }
-            
-            // Keep pipeline full
+
             while await group.next() != nil {
                 if Task.isCancelled { break }
-                
                 if let next = iterator.next() {
                     group.addTask {
-                        await render(next)
+                        await render(
+                            next,
+                            app: app,
+                            folderURL: folderURL,
+                            progress: progress
+                        )
                     }
                 }
             }
         }
-        
+
         let duration = Date().timeIntervalSince(batchStart)
-        
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.minute, .second]
-        formatter.unitsStyle = .abbreviated
-        
-        let durationString =
-        formatter.string(from: duration) ?? duration.formatted()
-        
         let completed = await progress.count
-        
+
         await MainActor.run {
-            app.generationState = .complete
-            app.generationMessage =
-            "✔️ Rendered \(completed)/\(total) images in \(durationString)"
-            app.generationProgress = nil
-        }
-        
-        // MARK: - Per-record render task
-        
-        func render(_ record: IGRecord) async {
-            if Task.isCancelled { return }
-            
-            // Skip already processed
-            if record.dateRendered != nil && record.status != .rendered {
+            guard app.generationState != .failed,
+                  app.generationState != .cancelled else {
+                app.generationProgress = nil
                 return
             }
-            
-            let renderStart = Date()
-            
-            await MainActor.run {
-                app.generationMessage = "Rendering \(record.phraseValue)..."
-                record.markAsDrawing()
-                try? app.context.save()
-            }
-            
-            let fileURL = folderURL
-                .appendingPathComponent(record.fileName)
-                .appendingPathExtension("png")
-            
+
+            app.generationState = .complete
+            app.generationMessage =
+                "✔️ Rendered \(completed)/\(total) images in \(duration.formatted())"
+            app.generationProgress = nil
+        }
+    }
+    
+    static private func render(_ record: IGRecord, app: IGAppModel, folderURL: URL, progress: ProgressTracker) async {
+        guard !Task.isCancelled else { return }
+        guard !record.isRendered else { return }
+
+        let renderStart = Date()
+
+        await MainActor.run {
+            record.markAsDrawing()
             do {
-                // 🔥 Heavy work (parallel-safe)
-                let cgImage = try record.design.renderImage(
-                    of: record.phraseValue,
-                    at: record.size,
-                    with: record.rawTheme
-                )
-                
-                await MainActor.run {
-                    record.markAsSaving()
-                    try? app.context.save()
-                }
-                
-                try cgImage.savePNG(to: fileURL, metadata: record.metadata)
-                
-                let duration = Date().timeIntervalSince(renderStart)
-                
-                await MainActor.run {
-                    record.markAsRendered(duration)
-                    try? app.context.save()
-                }
-                
-                let progressValue = await progress.increment()
-                
-                await MainActor.run {
-                    app.generationProgress = progressValue
-                }
-                
+                try app.context.save()
             } catch {
-                await MainActor.run {
-                    record.markRenderAsFailed(
-                        "Render/save failed: \(error.localizedDescription)"
+                record.markRenderAsFailed(
+                    "Failed to save render state: \(error.localizedDescription)"
+                )
+                app.generationState = .failed
+                app.appError = .recordFailure(
+                    "An internal error occurred while preparing images for rendering."
+                )
+            }
+        }
+
+        let fileURL = folderURL
+            .appendingPathComponent(record.fileName)
+            .appendingPathExtension("png")
+
+        do {
+            let cgImage = try record.design.renderImage(
+                of: record.phraseValue,
+                at: record.size,
+                with: record.rawTheme
+            )
+
+            try await MainActor.run {
+                record.markAsSaving()
+                try app.context.save()
+            }
+
+            try cgImage.savePNG(to: fileURL, metadata: record.metadata)
+
+            let duration = Date().timeIntervalSince(renderStart)
+
+            try await MainActor.run {
+                record.markAsRendered(duration)
+                try app.context.save()
+            }
+
+            let value = await progress.increment()
+
+            await MainActor.run {
+                app.generationProgress = value
+            }
+
+        } catch {
+            await MainActor.run {
+                record.markRenderAsFailed(
+                    "Render failed: \(error.localizedDescription)"
+                )
+
+                do {
+                    try app.context.save()
+                } catch {
+                    app.generationState = .failed
+                    app.appError = .recordFailure(
+                        "An internal error occurred while saving render results."
                     )
-                    app.generationMessage = "❌ Failed for \(record.phraseValue)"
-                    try? app.context.save()
                 }
             }
         }
@@ -222,7 +224,7 @@ enum IGImageManager {
         let fileName: String
     }
 
-    private actor UploadProgress {
+    private actor ProgressTracker {
         private var completed = 0
         let total: Int
 
@@ -311,7 +313,7 @@ enum IGImageManager {
         }
 
         let total = payloads.count
-        let progress = UploadProgress(total: total)
+        let progress = ProgressTracker(total: total)
         let start = Date()
 
         await withTaskGroup(of: Void.self) { group in
@@ -357,7 +359,7 @@ enum IGImageManager {
         _ payload: UploadPayload,
         app: IGAppModel,
         settings: IGAppSettings,
-        progress: UploadProgress
+        progress: ProgressTracker
     ) async {
 
         guard !Task.isCancelled else {
