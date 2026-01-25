@@ -163,139 +163,270 @@ enum IGImageManager {
             }
         }
     }
-}
     
-    /*
-    func generateRecordImages(
+    static func uploadRecordImages(
         _ records: [IGRecord],
         in app: IGAppModel,
-        using folderURL: URL
-    ) {
-        let total = records.count
-        guard total > 0 else { return }
+        with settings: IGAppSettings,
+        from localRoot: URL
+    ) async {
+        
+        guard localRoot.startAccessingSecurityScopedResource() else {
+            app.appError = .uploadFailure(
+                "The selected output folder could not be accessed. Please reselect it and try again."
+            )
+            return
+        }
 
-        let batchStart = Date()
-        app.generationState = .rendering
-        app.generationMessage = "Rendering \(total) images..."
-        app.generationProgress = 0.0
+        defer {
+            localRoot.stopAccessingSecurityScopedResource()
+        }
 
-        renderWorkItem = DispatchWorkItem { [weak self] in
-            guard let self else { return }
-            var completed = 0
+        guard !records.isEmpty else {
+            app.appError = .uploadFailure(
+                "There are no images selected to upload."
+            )
+            return
+        }
 
-            guard folderURL.startAccessingSecurityScopedResource() else {
-                DispatchQueue.main.async {
-                    app.generationState = .failed
-                    app.generationMessage = "❌ Could not access security-scoped folder."
-                    app.generationProgress = nil
+        let payloads = makeUploadPayloads(
+            from: records,
+            in: app,
+            localRoot: localRoot,
+            config: settings.ftp
+        )
+
+        guard !payloads.isEmpty else {
+            app.uploadState = .failed
+            app.uploadProgress = nil
+
+            app.appError = .uploadFailure(
+                "None of the selected images could be prepared for upload."
+            )
+
+            return
+        }
+
+        app.uploadState = .uploading
+        app.uploadMessage = "Uploading \(payloads.count) images…"
+        app.uploadProgress = 0.0
+
+        await uploadPayloads(payloads, in: app, with: settings)
+    }
+
+
+    private struct UploadPayload: Sendable {
+        let recordID: UUID
+        let fileURL: URL
+        let remoteURL: String
+        let fileName: String
+    }
+
+    private actor UploadProgress {
+        private var completed = 0
+        let total: Int
+
+        init(total: Int) {
+            self.total = total
+        }
+
+        func increment() -> Double {
+            completed += 1
+            return Double(completed) / Double(total)
+        }
+
+        var count: Int { completed }
+    }
+        
+
+    @MainActor
+    private static func makeUploadPayloads(
+        from records: [IGRecord],
+        in app: IGAppModel,
+        localRoot: URL,
+        config: IGFTPConfig
+    ) -> [UploadPayload] {
+
+        app.uploadBatch = Dictionary(
+            uniqueKeysWithValues: records.map { ($0.id, $0) }
+        )
+
+        var payloads: [UploadPayload] = []
+
+        for record in records {
+
+            let fileURL = localRoot
+                .appendingPathComponent(record.fileName)
+                .appendingPathExtension("png")
+
+            guard FileManager.default.fileExists(atPath: fileURL.path) else {
+                record.markUploadAsFailed("Rendered image file not found on disk.")
+                continue
+            }
+
+            guard let encodedPath =
+                config.remoteBasePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            else {
+                record.markUploadAsFailed("Invalid remote base path.")
+                continue
+            }
+
+            let rawFilename = record.fileName + ".png"
+
+            guard let encodedFilename =
+                rawFilename.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            else {
+                record.markUploadAsFailed("Invalid filename for upload.")
+                continue
+            }
+
+            let remoteURL =
+                "ftp://\(config.host):\(config.port)\(encodedPath)/\(encodedFilename)"
+
+            record.markAsUploading()
+
+            payloads.append(
+                UploadPayload(
+                    recordID: record.id,
+                    fileURL: fileURL,
+                    remoteURL: remoteURL,
+                    fileName: record.fileName
+                )
+            )
+        }
+
+        return payloads
+    }
+    
+    private static func uploadPayloads(
+        _ payloads: [UploadPayload],
+        in app: IGAppModel,
+        with settings: IGAppSettings
+    ) async {
+
+        defer {
+            Task { @MainActor in
+                app.uploadBatch = nil
+            }
+        }
+
+        let total = payloads.count
+        let progress = UploadProgress(total: total)
+        let start = Date()
+
+        await withTaskGroup(of: Void.self) { group in
+            for payload in payloads {
+                group.addTask(priority: .utility) {
+                    await uploadOne(payload, app: app, settings: settings, progress: progress)
                 }
+            }
+        }
+
+        let duration = Date().timeIntervalSince(start)
+
+        await MainActor.run {
+
+            guard app.uploadState != .failed,
+                  app.uploadState != .cancelled else {
+                app.uploadProgress = nil
                 return
             }
 
-            defer { folderURL.stopAccessingSecurityScopedResource() }
+            let uploaded = app.uploadBatch?
+                .values
+                .filter { $0.isUploaded }
+                .count ?? 0
 
-            for record in records {
-
-                // Cancellation check
-                if self.renderWorkItem?.isCancelled == true {
-                    DispatchQueue.main.async {
-                        app.generationState = .cancelled
-                        app.generationMessage = "❌ Rendering cancelled"
-                        app.generationProgress = nil
-                    }
-                    break
-                }
-
-                // Skip already-rendered
-                if record.dateRendered != nil && record.status != .rendered {
-                    DispatchQueue.main.async {
-                        app.generationMessage = "⚠️ Skipping already processed: \(record.phraseValue)"
-                    }
-                    continue
-                }
-
-                // Begin rendering
-                let renderStart = Date()
-                DispatchQueue.main.async {
-                    app.generationMessage = "Rendering \(record.phraseValue)..."
-                }
-
-                let fileURL = folderURL
-                    .appendingPathComponent(record.fileName)
-                    .appendingPathExtension("png")
-
-                DispatchQueue.main.async {
-                    record.markAsDrawing()
-                    try? app.context.save()
-                }
-
-                let cgImage = try record.design.renderImage(
-                    of: record.phraseValue, at: record.size, with: record.rawTheme
-                    )
-                /*
-                ) else {
-                    DispatchQueue.main.async {
-                        record.markRenderAsFailed("Failed to render image")
-                        app.generationMessage = "❌ Failed to render \(record.phraseValue)"
-                        try? app.context.save()
-                    }
-                    continue
-*/
-                DispatchQueue.main.async {
-                    record.markAsSaving()
-                    try? app.context.save()
-                }
-
-                do {
-                    try cgImage.savePNG(to: fileURL, metadata: record.metadata)
-
-                    DispatchQueue.main.async {
-                        let duration = Date().timeIntervalSince(renderStart)
-                        record.markAsRendered(duration)
-                        try? app.context.save()
-                    }
-
-                    completed += 1
-                    DispatchQueue.main.async {
-                        app.generationProgress = Double(completed) / Double(total)
-                    }
-
-                } catch {
-                    DispatchQueue.main.async {
-                        record.markRenderAsFailed("Image save failed: \(error.localizedDescription)")
-                        app.generationMessage = "❌ Save failed for \(record.phraseValue)"
-                        try? app.context.save()
-                    }
-                }
+            guard uploaded > 0 else {
+                app.uploadState = .failed
+                app.uploadProgress = nil
+                app.appError = .uploadFailure(
+                    "None of the images could be uploaded. Please check your FTP settings and try again."
+                )
+                return
             }
 
-            // Final completion
-            DispatchQueue.main.async {
-                switch app.generationState {
-                case .cancelled, .failed:
-                    app.generationProgress = nil
-                    return
-                default:
-                    break
-                }
-
-                let duration = Date().timeIntervalSince(batchStart)
-                let formatter = DateComponentsFormatter()
-                formatter.allowedUnits = [.minute, .second]
-                formatter.unitsStyle = .abbreviated
-                let durationString = formatter.string(from: duration) ?? duration.formatted()
-
-                app.generationState = .complete
-                app.generationMessage = "✔️ Rendered \(completed)/\(total) images in \(durationString)"
-                app.generationProgress = nil
-            }
-        }
-
-        if let item = renderWorkItem {
-            DispatchQueue.global(qos: .userInitiated).async(execute: item)
+            app.uploadState = .complete
+            app.uploadMessage =
+                "✔️ Uploaded \(uploaded)/\(total) images in \(String(format: "%.1f", duration))s"
+            app.uploadProgress = nil
         }
     }
-     */
+
+    private static func uploadOne(
+        _ payload: UploadPayload,
+        app: IGAppModel,
+        settings: IGAppSettings,
+        progress: UploadProgress
+    ) async {
+
+        guard !Task.isCancelled else {
+            let _ = await progress.increment()
+            return
+        }
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/curl")
+        process.arguments = [
+            "-T", payload.fileURL.path,
+            payload.remoteURL,
+            "--user", "\(settings.ftp.username):\(settings.ftp.password)",
+            "--silent",
+            "--fail",
+            "--ftp-create-dirs"
+        ]
+
+        let pipe = Pipe()
+        process.standardError = pipe
+
+        let start = Date()
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+
+            let duration = Date().timeIntervalSince(start)
+
+            let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
+            let stderr = String(data: errorData, encoding: .utf8)?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+
+            await MainActor.run {
+                guard let record = app.uploadBatch?[payload.recordID] else { return }
+
+                if process.terminationStatus == 0 {
+                    record.markAsUploaded(duration)
+                } else {
+                    record.markUploadAsFailed(
+                        stderr?.isEmpty == false ? stderr! : "Upload failed."
+                    )
+                }
+
+                try? app.context.save()
+            }
+
+        } catch {
+            await MainActor.run {
+                guard let record = app.uploadBatch?[payload.recordID] else { return }
+                record.markUploadAsFailed(error.localizedDescription)
+                try? app.context.save()
+            }
+        }
+
+        let value = await progress.increment()
+
+        let step = 1.0 / Double(progress.total)
+        let previous = max(0.0, value - step)
+
+        if value == 1.0 || Int(value * 50) != Int(previous * 50) {
+            await MainActor.run {
+                app.uploadProgress = value
+            }
+        }
+    }
+}
+    
+    
 
 /*
     func uploadRecordImages(

@@ -14,6 +14,8 @@ enum IGAppError: LocalizedError, Identifiable {
     case phraseFailure(String)
     case tagFailure(String)
     case recordFailure(String)
+    case renderFailure(String)
+    case uploadFailure(String)
 
     var errorDescription: String? {
         switch self {
@@ -21,6 +23,8 @@ enum IGAppError: LocalizedError, Identifiable {
         case .phraseFailure: "Phrase Failure Error"
         case .tagFailure: "Tag Failure Error"
         case .recordFailure: "Record Failure Error"
+        case .renderFailure: "Render Failure Error"
+        case .uploadFailure: "Upload Failure Error"
         }
     }
 
@@ -30,6 +34,8 @@ enum IGAppError: LocalizedError, Identifiable {
         case .phraseFailure(let error): error
         case .tagFailure(let error): error
         case .recordFailure(let error): error
+        case .renderFailure(let error): error
+        case .uploadFailure(let error): error
         }
     }
 }

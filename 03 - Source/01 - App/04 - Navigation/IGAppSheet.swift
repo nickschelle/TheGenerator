@@ -34,12 +34,10 @@ enum IGAppSheet: Identifiable {
             IGGroupInfoSheet(group)
         case .editTags(let selected, let onChange): IGBatchTagEditorSheet(selected, onChange: onChange)
         case .ftpSignIn: EmptyView()
-            /*
             Form {
                 IGFTPSignInSettings()
             }
             .formStyle(.grouped)
-             */
         case .editPhraseTags://(let phrase, let tags):
             EmptyView()
             //IGPhraseTagEditor(for: phrase, tags: tags)

@@ -21,6 +21,10 @@ struct IGRecordStatusView: View {
                 .foregroundStyle(.secondary)
             Text(record.status.description)
                 .foregroundStyle(.secondary)
+            if let message = record.failedMessage {
+                Text(message)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }

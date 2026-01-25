@@ -31,7 +31,6 @@ struct IGQueue: View {
                 NavigationLink(value: IGDetailSelection.record(record)) {
                     IGContentRow(record.title, systemImage: "photo") {
                         IGRecordStatusView(record)
-                        Text(record.fileName)
                     }
                     .contextMenu {
                         IGDeleteRecordsButton(record)

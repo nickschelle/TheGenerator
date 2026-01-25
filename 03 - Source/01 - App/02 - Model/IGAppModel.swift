@@ -97,6 +97,7 @@ final class IGAppModel {
     var generationMessage: String?
     var generationProgress: Double?
     
+    var uploadBatch: [UUID: IGRecord]? = nil
     var uploadState: IGImageUploadState = .idle
     var uploadMessage: String?
     var uploadProgress: Double?

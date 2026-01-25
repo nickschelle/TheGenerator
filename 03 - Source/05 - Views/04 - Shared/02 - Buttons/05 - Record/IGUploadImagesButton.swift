@@ -11,12 +11,14 @@ import SwiftData
 struct IGUploadImagesButton: View {
     @Environment(IGAppModel.self) private var app
     @Environment(IGAppSettings.self) private var settings
+    
+    @State private var uploadTast: Task<Void, Never>?
 
     private var recordsAreSelected: Bool {
         !app.selectedRecords.isEmpty
     }
 
-    private var selectedRecordsSorted: [IGRecord] {
+    private var uploadQueue: [IGRecord] {
         Array(app.selectedRecords.sorted { $0.dateCreated < $1.dateCreated })
     }
 
@@ -30,47 +32,65 @@ struct IGUploadImagesButton: View {
 
     var body: some View {
         Button(title, systemImage: symbol, action: onAction)
-            .disabled((recordsAreSelected ? selectedRecordsSorted.isEmpty : false) || app.generationState.isBusy)
+            .disabled((recordsAreSelected ? uploadQueue.isEmpty : false) || app.generationState.isBusy)
     }
 
     private func onAction() {
-        /*
+        // Cancel active render
         if app.uploadState.isBusy {
-            app.imageManager.cancelUpload(in: app)
-        } else {
-            Task {
-                let recordsToUpload: [IGRecord]
+            uploadTast?.cancel()
+            uploadTast = nil
+            return
+        }
 
-                if recordsAreSelected {
-                    recordsToUpload = selectedRecordsSorted
-                } else {
-                    do {
-                        recordsToUpload = try app.context.fetch(IGImageRecordFilter.upload.fetchDescriptor)
-                    } catch {
-                        print("❌ Failed to fetch upload queue:", error)
-                        return
-                    }
+        // Start render
+        uploadTast = Task {
+
+            // Resolve records to render
+            let recordsToUpload: [IGRecord]
+
+            if recordsAreSelected {
+                recordsToUpload = uploadQueue
+            } else {
+                do {
+                    let replacedRaw = IGRecordStatus.replacedInFolder.rawValue
+                    let descriptor = FetchDescriptor<IGRecord>(
+                        predicate: #Predicate<IGRecord> {
+                            $0.dateRendered != nil &&
+                            $0.dateUploaded == nil &&
+                            $0.rawStatus != replacedRaw
+                        }
+                    )
+                    recordsToUpload = try app.context.fetch(descriptor)
+                } catch {
+                    app.appError = .recordFailure("Failed to fetch upload queue.")
+                    return
                 }
-
-                app.ensureLocationAvailableOrImport(
-                    using: settings.location
-                ) { folderURL in
-                    app.ensureFTPLoginAvailableOrPrompt(
-                        using: settings.ftp
-                    ) { ftp in
-                        app.imageManager.uploadRecordImages(recordsToUpload, in: app, from: folderURL, config: settings.ftp)
-                    } onFailure: {
-                        app.uploadState = .failed
-                        app.uploadMessage = "No output folder selected."
+            }
+            
+            app.ensureLocationAvailableOrImport(
+                using: settings.location
+            ) { folderURL in
+                app.ensureFTPLoginAvailableOrPrompt(
+                    using: settings.ftp
+                ) { ftp in
+                    uploadTast = Task {
+                        await IGImageManager.uploadRecordImages(
+                            recordsToUpload,
+                            in: app,
+                            with: settings,
+                            from: folderURL
+                        )
                     }
                 } onFailure: {
                     app.uploadState = .failed
                     app.uploadMessage = "No output folder selected."
                 }
-
+            } onFailure: {
+                app.uploadState = .failed
+                app.uploadMessage = "No output folder selected."
             }
         }
-         */
     }
          
 }
