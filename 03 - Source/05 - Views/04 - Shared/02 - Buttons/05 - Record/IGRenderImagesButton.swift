@@ -54,6 +54,10 @@ struct IGRenderImagesButton: View {
             renderTask = nil
             return
         }
+        
+        if !app.uploadState.isBusy {
+            app.resetUploadState()
+        }
 
         // Start render
         renderTask = Task {

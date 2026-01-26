@@ -40,7 +40,7 @@ enum IGImageManager {
         let progress = ProgressTracker(total: total)
 
         await MainActor.run {
-            app.generationState = .rendering
+            app.generationState = .working
             app.generationMessage = "Rendering \(total) images…"
             app.generationProgress = 0.0
         }
@@ -209,7 +209,7 @@ enum IGImageManager {
             return
         }
 
-        app.uploadState = .uploading
+        app.uploadState = .working
         app.uploadMessage = "Uploading \(payloads.count) images…"
         app.uploadProgress = 0.0
 

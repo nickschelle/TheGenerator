@@ -29,9 +29,16 @@ struct IGAddToRenderQueueButton: View {
             },
             action: addToRender
         )
+        .disabled(app.generationState.isBusy)
     }
     
     private func addToRender(_ selection: any Collection<IGPhrase>) {
+        
+        guard !app.generationState.isBusy else { return }
+        
+        app.resetGenerationState()
+        
+        
         do {
             try IGRecordManager.createPhraseRecords(for: selection, with: settings, in: app.context)
             try app.context.save()

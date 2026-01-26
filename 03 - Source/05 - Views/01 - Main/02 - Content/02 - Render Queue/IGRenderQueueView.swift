@@ -13,22 +13,11 @@ struct IGRenderQueue: View {
     var body: some View {
         
         IGQueue(
-            "Render Queue",
+            .render,
             predicate: #Predicate<IGRecord> {
                 $0.dateRendered == nil
             }
         )
-        .toolbar {
-            ToolbarItemGroup {
-                IGRenderImagesButton()
-                Menu("More", systemImage: "ellipsis") {
-                    IGDeleteRecordsButton()
-                    Divider()
-                    //IHSelectAllRecords(.render)
-                }
-                .menuIndicator(.hidden)
-            }
-        }
     }
 }
 

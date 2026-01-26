@@ -93,14 +93,26 @@ final class IGAppModel {
     var onFTPLoginSuccess: ((IGFTPConfig) -> Void)?
     var onFTPLoginFailure: (() -> Void)?
 
-    var generationState: IGImageGenerationState = .idle
+    var generationState: IGProcessState = .idle
     var generationMessage: String?
     var generationProgress: Double?
     
+    func resetGenerationState() {
+        self.generationState = .idle
+        self.generationMessage = nil
+        self.generationProgress = nil
+    }
+    
     var uploadBatch: [UUID: IGRecord]? = nil
-    var uploadState: IGImageUploadState = .idle
+    var uploadState: IGProcessState = .idle
     var uploadMessage: String?
     var uploadProgress: Double?
+    
+    func resetUploadState() {
+        self.uploadState = .idle
+        self.uploadMessage = nil
+        self.uploadProgress = nil
+    }
      
     // MARK: - Init
     init(inMemory: Bool = false) {
@@ -108,7 +120,6 @@ final class IGAppModel {
         context = container.mainContext
     }
     
-
     func ensureLocationAvailableOrImport(
         using location: IGLocationConfig,
         onSuccess: @escaping (URL) -> Void,

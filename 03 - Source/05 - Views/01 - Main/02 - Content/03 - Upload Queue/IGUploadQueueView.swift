@@ -15,28 +15,14 @@ struct IGUploadQueue: View {
     private let replacedRaw = IGRecordStatus.replacedInFolder.rawValue
     
     var body: some View {
-        VStack {
-            Text(app.uploadMessage ?? "Loading...")
-            IGQueue(
-                "Upload Queue",
-                predicate: #Predicate<IGRecord> {
-                    $0.dateRendered != nil &&
-                    $0.dateUploaded == nil &&
-                    $0.rawStatus != replacedRaw
-                }
-            )
-        }
-        .toolbar {
-            ToolbarItemGroup {
-                IGUploadImagesButton()
-                Menu("More", systemImage: "ellipsis") {
-                    IGDeleteRecordsButton()
-                    Divider()
-                    //IHSelectAllRecords(.render)
-                }
-                .menuIndicator(.hidden)
+        IGQueue(
+            .upload,
+            predicate: #Predicate<IGRecord> {
+                $0.dateRendered != nil &&
+                $0.dateUploaded == nil &&
+                $0.rawStatus != replacedRaw
             }
-        }
+        )
     }
 }
 

@@ -21,7 +21,7 @@ struct IGRenderQueueSidebarItem: View {
             "Render Queue",
             systemImage: "photo.stack",
             count: records.count,
-            //progress: app.generationProgress
+            progress: app.generationProgress
         )
     }
 }

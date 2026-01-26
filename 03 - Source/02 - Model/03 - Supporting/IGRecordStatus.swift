@@ -64,17 +64,17 @@ enum IGRecordStatus: String, Codable, Equatable, Sendable, CustomStringConvertib
     static let defaultValue: Self = .queued
     
     var symbol: String {
-            switch self {
-            case .queued: "list.bullet.rectangle"
-            case .drawing: "paintbrush"
-            case .saving: "square.and.arrow.down"
-            case .failedRender: "exclamationmark.triangle"
-            case .rendered: "photo.badge.checkmark"
-            case .replacedInFolder: "photo.on.rectangle.angled"
-            case .uploading: "square.and.arrow.up.badge.clock"
-            case .failedUpload: "exclamationmark.triangle"
-            case .uploaded: "square.and.arrow.up.badge.clock.fill"
-            case .replacedOnline: "trash"
-            }
+        switch self {
+        case .queued: "list.bullet.rectangle"
+        case .drawing: "paintbrush"
+        case .saving: "square.and.arrow.down"
+        case .failedRender: "exclamationmark.triangle"
+        case .rendered: "photo.badge.checkmark"
+        case .replacedInFolder: "photo.on.rectangle.angled"
+        case .uploading: "square.and.arrow.up.badge.clock"
+        case .failedUpload: "exclamationmark.triangle"
+        case .uploaded: "square.and.arrow.up.badge.clock.fill"
+        case .replacedOnline: "trash"
         }
+    }
 }

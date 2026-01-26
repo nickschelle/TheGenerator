@@ -30,7 +30,7 @@ struct IGUploadQueueSidebarItem: View {
             "Upload Queue",
             systemImage: "square.and.arrow.up.on.square",
             count: records.count,
-            //progress: app.uploadProgress
+            progress: app.uploadProgress
         )
     }
 }
