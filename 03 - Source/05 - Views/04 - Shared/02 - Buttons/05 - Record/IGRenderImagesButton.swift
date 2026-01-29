@@ -89,6 +89,7 @@ struct IGRenderImagesButton: View {
                         await IGImageManager.generateRecordImages(
                             recordsToRender,
                             in: app,
+                            with: settings,
                             using: folderURL
                         )
                     }

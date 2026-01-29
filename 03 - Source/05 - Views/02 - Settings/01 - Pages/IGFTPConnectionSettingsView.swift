@@ -24,6 +24,19 @@ struct IGFTPConnectionSettings: View {
                     .textFieldStyle(.roundedBorder)
                 Toggle("Use TLS", isOn: $tempConfig.useTLS)
                     .toggleStyle(.switch)
+                Stepper(
+                    value: $tempConfig.maxConcurrentUploads,
+                    in: 1...6,
+                    step: 1
+                ) {
+                    HStack {
+                        Text("Simultaneous Uploads")
+                        Spacer()
+                        Text("\(tempConfig.maxConcurrentUploads)")
+                            .foregroundStyle(tempConfig.maxConcurrentUploads > 4 ? .red : .secondary)
+                            .monospacedDigit()
+                    }
+                }
                 TextField("Remote Path", text: $tempConfig.remoteBasePath)
                     .textFieldStyle(.roundedBorder)
                     .onChange(of: tempConfig.remoteBasePath) { _, newValue in

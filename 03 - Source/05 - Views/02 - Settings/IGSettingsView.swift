@@ -71,7 +71,14 @@ struct IGSettingsView: View {
                 }
             }
             
-            Section() {
+            Section("Image Generation") {
+                IGSettingsRowView(
+                    "Rendering",
+                    subtitle: settings.render.concurrency.displayName,
+                    systemName: "paintpalette.fill",
+                    color: .accentColor,
+                    action: { selectedSetting = .render }
+                )
                 IGSettingsRowView(
                     "Output Folder",
                     subtitle: settings.location.displayPath ?? "No folder selected",
@@ -80,6 +87,7 @@ struct IGSettingsView: View {
                     action: { isShowingFileSelector = true }
                 )
             }
+            
             Section("FTP") {
                
                 IGSettingsRowView(
@@ -168,7 +176,7 @@ struct IGSettingsView: View {
 }
 
 enum selectedSettings: Identifiable {
-    case design(IGDesignKey), metadata, tags, ftpConnection, ftpSignIn
+    case design(IGDesignKey), metadata, tags, ftpConnection, ftpSignIn, render
     
     var id: String {
         switch self {
@@ -177,6 +185,7 @@ enum selectedSettings: Identifiable {
         case .tags: "tags"
         case .ftpConnection: "ftpConnection"
         case .ftpSignIn: "ftpSignIn"
+        case .render: "render"
         }
     }
     
@@ -186,6 +195,7 @@ enum selectedSettings: Identifiable {
         case .design(let key): IGDesignSettings(key)
         case .metadata: IGMetadataSettings()
         case .tags: IGDefaultTagSettings()
+        case .render: IGRenderSettings()
         case .ftpConnection: IGFTPConnectionSettings()
         case .ftpSignIn: IGFTPSignInSettings()
         }

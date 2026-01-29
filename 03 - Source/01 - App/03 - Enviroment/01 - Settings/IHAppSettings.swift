@@ -16,7 +16,9 @@ final class IGAppSettings {
     var location: IGLocationConfig = .load()
     var metadata: IGMetadataConfig = .load()
     var defaultTags: IGDefaultTagsConfig = .load()
+    var render: IGRenderConfig = .load()
     var designConfigs: [IGDesignKey: IGDesignConfig] = [:]
+
     
     init() {
         self.ftp = IGFTPConfig.load()
@@ -24,6 +26,7 @@ final class IGAppSettings {
         self.location = IGLocationConfig.load()
         self.metadata = IGMetadataConfig.load()
         self.defaultTags = IGDefaultTagsConfig.load()
+        self.render = IGRenderConfig.load()
         IGDesignKey.allCases.forEach { key in
             designConfigs[key] = key.loadConfig()
         }
@@ -64,6 +67,12 @@ final class IGAppSettings {
         return defaultTags
     }
     
+    @discardableResult
+    func saveRender() -> IGRenderConfig {
+        render = render.save()
+        return render
+    }
+    
     func designConfig(for key: IGDesignKey) -> IGDesignConfig {
         designConfigs[key] ?? IGDesignConfig(for: key.design)
     }
@@ -84,12 +93,14 @@ final class IGAppSettings {
         location = IGLocationConfig()
         metadata = IGMetadataConfig()
         defaultTags = IGDefaultTagsConfig()
+        render = IGRenderConfig()
 
         saveFTP()
         saveWorkspace()
         saveLocation()
         saveMetadata()
         saveDefaultTags()
+        saveRender()
     }
 
     var phraseAffectingDateModified: Date {
