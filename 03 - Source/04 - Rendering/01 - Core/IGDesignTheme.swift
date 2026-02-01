@@ -11,12 +11,12 @@ protocol IGDesignTheme: RawRepresentable, CaseIterable, Hashable
 where RawValue == String {
     var displayName: String { get }
     static var defaultTheme: Self { get }
+    var preferredBackground: IGBackgroundStyle { get }
     @MainActor var presetTags: Set<IGTag> { get }
 }
 
 extension IGDesignTheme {
     var id: String { rawValue }
 }
-
 
 

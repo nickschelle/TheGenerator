@@ -9,24 +9,24 @@ import Foundation
 
 
 enum IHeartPhraseTheme: String, IGDesignTheme, RawRepresentable {
-    case classicOnLight
-    case classicOnDark
+    case classicWhite
+    case classicBlack
     
     static var defaultTheme: Self {
-        .classicOnLight
+        .classicWhite
     }
 
     var displayName: String {
         switch self {
-        case .classicOnLight: "Classic for Light Backgrounds"
-        case .classicOnDark: "Classic for Dark Backgrounds"
+        case .classicWhite: "Classic in White"
+        case .classicBlack: "Classic in Black"
         }
     }
     
     var textColor: IGColor {
         switch self {
-        case .classicOnLight: .black
-        case .classicOnDark: .white
+        case .classicWhite: .black
+        case .classicBlack: .white
         }
     }
     
@@ -42,19 +42,16 @@ enum IHeartPhraseTheme: String, IGDesignTheme, RawRepresentable {
         }
     }
     
-    @MainActor var presetTags: Set<IGTag> {
-        let common: [IGTag] = [
-            IGTag("Red Heart", scope: .theme, isPreset: true),
-            IGTag("Helvetica", scope: .theme, isPreset: true)
-        ]
-
-        let textColor: IGTag = switch self {
-        case .classicOnLight:
-            IGTag("Black Text", scope: .theme, isPreset: true)
-        case .classicOnDark:
-            IGTag("White Text", scope: .theme, isPreset: true)
+    var preferredBackground: IGBackgroundStyle {
+        switch self {
+        case .classicWhite: .light
+        case .classicBlack: .dark
         }
-
-        return Set(common + [textColor])
     }
+    
+    @MainActor var presetTags: Set<IGTag> {[
+        IGTag("\(heartColor.name.capitalized) Heart", scope: .theme, isPreset: true),
+        IGTag("\(textColor.name.capitalized) Text", scope: .theme, isPreset: true),
+        IGTag("\(textFont.displayName) Font", scope: .theme, isPreset: true)
+    ]}
 }

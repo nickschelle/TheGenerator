@@ -40,8 +40,8 @@ extension IGRecord {
         }
     }
     
-    var key: IHRecordKey {
-        IHRecordKey(from: self)
+    var key: IGRecordKey {
+        IGRecordKey(from: self)
     }
     
     var isQueued: Bool { status.isQueued }

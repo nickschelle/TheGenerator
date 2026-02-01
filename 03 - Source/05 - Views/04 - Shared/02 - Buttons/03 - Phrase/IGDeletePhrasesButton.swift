@@ -39,6 +39,10 @@ struct IGDeletePhrasesButton: View {
     }
     
     private func delete(_ phrases: any Collection<IGPhrase>) {
+        
+        if let selectedDetail = app.selectedDetail {
+            app.selectedDetails.remove(selectedDetail)
+        }
         do {
             try IGPhraseManager.deletePhrases(phrases, with: settings, in: app.context)
             try app.context.save()

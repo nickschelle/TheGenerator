@@ -29,7 +29,7 @@ final class IGAppModel {
         isShowingConfirmation = true
     }
 
-    var selectedContents: Set<IGContentSelection> = []
+    var selectedContents: Set<IGContentSelection> = [.allPhrases]
     var selectedContent: IGContentSelection? {
         guard selectedContents.count == 1 else { return nil }
         return selectedContents.first
@@ -82,9 +82,9 @@ final class IGAppModel {
     
     var phraseToEdit: IGPhrase?
     var isAddingPhrase: Bool = false
-    /*
-    var inspectorRecord: IHRecord?
-    */
+
+    var inspectorRecord: IGRecord?
+
     var locationImportInProgress: Bool = false
     var onLocationImportSuccess: ((URL) -> Void)?
     var onLocationImportFailure: (() -> Void)?

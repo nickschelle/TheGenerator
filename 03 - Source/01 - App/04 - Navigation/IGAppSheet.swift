@@ -38,9 +38,8 @@ enum IGAppSheet: Identifiable {
                 IGFTPSignInSettings()
             }
             .formStyle(.grouped)
-        case .editPhraseTags://(let phrase, let tags):
-            EmptyView()
-            //IGPhraseTagEditor(for: phrase, tags: tags)
+        case .editPhraseTags(let phrase, let tags):
+            IGPhraseTagEditor(for: phrase, tags: tags)
         }
         
     }

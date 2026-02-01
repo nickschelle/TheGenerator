@@ -37,6 +37,10 @@ struct IGDeleteGroupsButton: View {
     }
     
     private func delete(_ groups: [IGGroup]) {
+        if app.selectedContent != nil {
+            app.selectedContents = [.allPhrases]
+            app.selectedDetails.removeAll()
+        }
         do {
             try IGGroupManager.deleteGroups(groups, in: app.context)
             try app.context.save()

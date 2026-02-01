@@ -5,7 +5,7 @@
 //  Created by Nick Schelle on 2025-11-19.
 //
 
-struct IHRecordKey: Hashable, Identifiable, CustomStringConvertible, Comparable {
+struct IGRecordKey: Hashable, Identifiable, CustomStringConvertible, Comparable {
     let designKey: IGDesignKey
     let themeID: String
 
@@ -18,22 +18,22 @@ struct IHRecordKey: Hashable, Identifiable, CustomStringConvertible, Comparable 
         self.designKey = designKey
         self.themeID = theme.id
     }
-/*
+
     var theme: any IGDesignTheme {
-        designKey.design.theme(rawValue: themeID) ?? designKey.design.defaultTheme
+        (try? designKey.design.theme(rawValue: themeID)) ?? designKey.design.defaultTheme
     }
-*/
+    
     var rawID: String {
         "\(designKey.rawValue)-\(themeID)"
     }
 
     var id: String { rawID }
-    var description: String { rawID } // } displayValue() }
-/*
+    var description: String { displayValue() }
+
     func displayValue(includeDesign: Bool = true) -> String {
-        (includeDesign ? "\(designKey.displayName) " : "") + theme.displayName
+        return (includeDesign ? "\(designKey.displayName) " : "") + theme.displayName
     }
-*/
+
     static func < (lhs: Self, rhs: Self) -> Bool {
         (lhs.designKey.rawValue, lhs.themeID) < (rhs.designKey.rawValue, rhs.themeID)
     }

@@ -34,6 +34,10 @@ extension IGDesignKey {
         design.shortName
     }
     
+    var defaultTheme: any IGDesignTheme {
+        design.defaultTheme
+    }
+    
     var displayName: String {
         design.displayName
     }
@@ -52,6 +56,13 @@ extension IGDesignKey {
         with rawTheme: String
     ) throws -> CGImage {
         try design.renderImage(of: phrase, at: size, with: rawTheme)
+    }
+    
+    @MainActor
+    var recordKeys: Set<IGRecordKey> {
+        Set(
+            design.themes.map { IGRecordKey(designKey: self, theme: $0) }
+        )
     }
 }
 

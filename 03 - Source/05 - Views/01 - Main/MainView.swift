@@ -25,8 +25,7 @@ struct MainView: View {
         } content: {
             IGContentView()
         } detail: {
-            Text("Detail View")
-            //IHDetailView()
+            IGDetailView()
         }
         .onChange(of: settings.workspace.workspace) {
             app.selectedContents = [.allPhrases]

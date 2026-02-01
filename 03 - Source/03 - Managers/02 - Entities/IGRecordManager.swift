@@ -47,7 +47,7 @@ struct IGRecordManager {
                 
                 for theme in themes {
                     
-                    let key = IHRecordKey(designKey: designKey, theme: theme)
+                    let key = IGRecordKey(designKey: designKey, theme: theme)
 
                     let recodTags = associatedTags.union(designKey.presetTags(using: theme))
                     let cleanedTags = IGTagManager.dedupeByPriority(recodTags)
@@ -115,6 +115,64 @@ struct IGRecordManager {
         }
         
         try FileManager.default.removeItem(at: fileURL)
+    }
+    
+    static func organizeRecordsByRevision(_ records: [IGRecord]? = nil, for phrase: IGPhrase) -> IGRevisionMap {
+        let records = records ?? phrase.records
+        var result: IGRevisionMap = [:]
+
+        for designKey in IGDesignKey.allCases {
+
+            // All possible record keys for this design
+            let recordKeys = designKey.recordKeys
+
+            // Records that actually exist for this design
+            let designRecords = records.filter {
+                $0.key.designKey == designKey
+            }
+
+            // Group existing records by record key
+            let recordsByKey: [IGRecordKey: [IGRecord]] =
+                Dictionary(grouping: designRecords) { $0.key }
+
+            var perKey: [IGRecordKey: [IGRecord?]] = [:]
+
+            for recordKey in recordKeys {
+
+                let records = recordsByKey[recordKey] ?? []
+                let pendingRevision = phrase.pendingRevision(for: recordKey)
+
+                perKey[recordKey] = revisionSlots(for: records, max: pendingRevision)
+            }
+
+            result[designKey] = perKey
+        }
+
+        return result
+    }
+
+    private static func revisionSlots(
+        for records: [IGRecord],
+        max maxRevision: Int
+    ) -> [IGRecord?] {
+        
+        /*
+        guard let maxRevision = records.map(\.revision).max() else {
+            return []
+        }
+        */
+        
+
+        var slots = Array<IGRecord?>(
+            repeating: nil,
+            count: maxRevision + 1
+        )
+
+        for record in records {
+            slots[record.revision] = record
+        }
+
+        return slots
     }
 }
 /*

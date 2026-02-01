@@ -38,6 +38,9 @@ struct IGDeleteRecordsButton: View {
     }
     
     private func delete(_ records: any Collection<IGRecord>) {
+        if let selectedDetail = app.selectedDetail {
+            app.selectedDetails.remove(selectedDetail)
+        }
         do {
             try IGRecordManager.deleteRecords(records, with: settings, in: app.context)
             try app.context.save()

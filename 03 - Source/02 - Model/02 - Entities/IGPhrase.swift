@@ -16,25 +16,25 @@ extension IGPhrase {
         Set(designLinks.map(\.designKey))
     }
     
-    func stepRevision(for key: IHRecordKey) {
+    func stepRevision(for key: IGRecordKey) {
         let id = key.rawID
         revisionMap[id] = pendingRevision(for: key)
     }
 
-    func latestRevision(for key: IHRecordKey) -> Int {
+    func latestRevision(for key: IGRecordKey) -> Int {
         revisionMap[key.rawID] ?? -1
     }
 
-    func pendingRevision(for key: IHRecordKey) -> Int {
+    func pendingRevision(for key: IGRecordKey) -> Int {
         latestRevision(for: key) + 1
     }
     
-    func updateUpload(for key: IHRecordKey) {
+    func updateUpload(for key: IGRecordKey) {
         let latest = latestRevision(for: key)
         uploadMap[key.rawID] = latest
     }
 
-    func latestUpload(for key: IHRecordKey) -> Int? {
+    func latestUpload(for key: IGRecordKey) -> Int? {
         uploadMap[key.rawID]
     }
 }
