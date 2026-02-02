@@ -68,6 +68,6 @@ extension IGMetadataConfig: IGValueDateStampable { }
 
 extension IGMetadataConfig: IGTagPresetable {
     var presetTags: Set<IGTag> {
-        [IGTag(author, scope: .metadata, isPreset: true)]
+        [IGTag(author.lowercased(), scope: .metadata, isPreset: true)]
     }
 }

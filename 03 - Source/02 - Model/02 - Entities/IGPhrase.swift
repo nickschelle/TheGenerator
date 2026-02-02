@@ -16,6 +16,10 @@ extension IGPhrase {
         Set(designLinks.map(\.designKey))
     }
     
+    var isEditable: Bool {
+        revisionMap.isEmpty && records.isEmpty
+    }
+    
     func stepRevision(for key: IGRecordKey) {
         let id = key.rawID
         revisionMap[id] = pendingRevision(for: key)

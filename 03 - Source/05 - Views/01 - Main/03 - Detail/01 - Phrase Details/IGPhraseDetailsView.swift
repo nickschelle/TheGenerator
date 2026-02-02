@@ -60,7 +60,7 @@ struct IGPhraseDetails: View {
                 .padding(.top)
             Form() {
                 Section {
-                    IGRowButton(action: !phrase.records.isEmpty ? nil : { showRenameAlert() }) {
+                    IGRowButton(action: phrase.isEditable ? { showRenameAlert() } : nil) {
                         LabeledContent("Phrase") {
                             Text(phrase.value)
                         }

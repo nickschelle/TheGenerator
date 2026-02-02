@@ -18,6 +18,7 @@ struct IGModelActionButton<Model: PersistentModel>: View {
     private let systemImage: String
     private let action: ([Model]) -> Void
     private let titleBuilder: (String) -> String
+    private let customIsDisabled: ([Model]) -> Bool
 
     init(
         _ model: Model? = nil,
@@ -25,7 +26,8 @@ struct IGModelActionButton<Model: PersistentModel>: View {
         systemImage: String,
         confirmation: IGConfirmationContent? = nil,
         titleBuilder: @escaping (String) -> String,
-        action: @escaping ([Model]) -> Void
+        action: @escaping ([Model]) -> Void,
+        isDisabled: @escaping ([Model]) -> Bool = {_ in false }
     ) {
         self.primaryModel = model
         self.selection = Array(selection)
@@ -33,6 +35,7 @@ struct IGModelActionButton<Model: PersistentModel>: View {
         self.confirmation = confirmation
         self.action = action
         self.titleBuilder = titleBuilder
+        self.customIsDisabled = isDisabled
     }
 
     init(
@@ -41,7 +44,8 @@ struct IGModelActionButton<Model: PersistentModel>: View {
         actionTitle: String,
         systemImage: String,
         confirmation: IGConfirmationContent? = nil,
-        action: @escaping ([Model]) -> Void
+        action: @escaping ([Model]) -> Void,
+        isDisabled: @escaping ([Model]) -> Bool = {_ in false }
     ) {
         self.primaryModel = model
         self.selection = Array(selection)
@@ -49,6 +53,7 @@ struct IGModelActionButton<Model: PersistentModel>: View {
         self.confirmation = confirmation
         self.action = action
         self.titleBuilder = { "\(actionTitle) \($0)" }
+        self.customIsDisabled = isDisabled
     }
     
     init(
@@ -57,7 +62,8 @@ struct IGModelActionButton<Model: PersistentModel>: View {
         systemImage: String,
         confirmation: IGConfirmationContent? = nil,
         titleBuilder: @escaping (String) -> String,
-        action: @escaping (Model) -> Void
+        action: @escaping (Model) -> Void,
+        isDisabled: @escaping (Model) -> Bool = {_ in false }
     ) {
         // Store the provided explicit model
         self.primaryModel = model
@@ -79,6 +85,13 @@ struct IGModelActionButton<Model: PersistentModel>: View {
                 action(first)
             }
         }
+        
+        self.customIsDisabled = { models in
+            guard let first = models.first else {
+                return false
+            }
+            return isDisabled(first)
+        }
     }
     
     init(
@@ -87,7 +100,8 @@ struct IGModelActionButton<Model: PersistentModel>: View {
         actionTitle: String,
         systemImage: String,
         confirmation: IGConfirmationContent? = nil,
-        action: @escaping (Model) -> Void
+        action: @escaping (Model) -> Void,
+        isDisabled: @escaping (Model) -> Bool = {_ in false }
     ) {
         // Store the provided explicit model
         self.primaryModel = model
@@ -108,13 +122,21 @@ struct IGModelActionButton<Model: PersistentModel>: View {
             if let first = models.first {
                 action(first)
             }
+        }
+        
+        self.customIsDisabled = { models in
+            guard let first = models.first else {
+                return false
+            }
+            return isDisabled(first)
         }
     }
 
     // MARK: - Computed
 
     private var isDisabled: Bool {
-        primaryModel == nil && selection.isEmpty
+        primaryModel == nil && selection.isEmpty ||
+        customIsDisabled(selectedModels)
     }
 
     private var selectedModels: [Model] {

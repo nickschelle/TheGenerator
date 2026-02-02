@@ -9,28 +9,62 @@ import SwiftUI
 
 struct IGDesignSectionRow: View {
     
+    enum ImageState {
+        case unrendered
+        case available
+        case missing
+    }
+    
     private let title: String
     private let revision: Int
-    private let isNew: Bool
+    private let imageState: ImageState
+    private let onAction: () -> Void
     
-    init(_ title: String, revision: Int, isNew: Bool) {
+    init(_ title: String, revision: Int, imageState: ImageState, onAction: @escaping () -> Void = {}) {
         self.title = title
         self.revision = revision
-        self.isNew = isNew
+        self.imageState = imageState
+        self.onAction = onAction
     }
+    
+    private var titleForground: Color {
+        switch imageState {
+        case .unrendered: .secondary
+        default: .primary
+        }
+    }
+    
+    private var revisionForground: Color {
+        switch imageState {
+        case .unrendered: Color(nsColor: .tertiaryLabelColor)
+        case .available: .accentColor
+        case .missing: .red
+        }
+    }
+    
+    private var revisionLable: Text {
+        Text(revision.spelledOutRevision)
+            .foregroundStyle(revisionForground)
+    }
+    
     var body: some View {
         Label {
             HStack {
                 Text(title)
                     .font(.body)
-                    .foregroundStyle(isNew ? .secondary : .primary)
+                    .foregroundStyle(titleForground)
                     .lineLimit(1)
                     .truncationMode(.tail)
                 
                 Spacer()
                 
-                Text(revision.spelledOutRevision)
-                    .foregroundStyle(isNew ? Color(nsColor: .tertiaryLabelColor) : Color.accentColor)
+                if imageState == .available {
+                    Button(action: onAction) {
+                        revisionLable
+                    }.buttonStyle(.plain)
+                } else {
+                    revisionLable
+                }
             }
         } icon: {
             Image(systemName: "photo")
@@ -44,5 +78,5 @@ struct IGDesignSectionRow: View {
 }
 
 #Preview {
-    IGDesignSectionRow("Hi", revision: 2, isNew: true)
+    IGDesignSectionRow("Hi", revision: 2, imageState: .unrendered) {}
 }

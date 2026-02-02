@@ -84,7 +84,7 @@ extension IGRecord {
         [
             design.shortName,
             phraseValue.pascalCased,
-            theme.displayName,
+            theme.displayName.pascalCased,
             "\(width)x\(height)"
         ].joined(separator: "_")
     }

@@ -11,7 +11,7 @@ struct IGEditPhraseButton: View {
     
     @Environment(IGAppModel.self) private var app
     
-    let phrase: IGPhrase?
+    private let phrase: IGPhrase?
     
     init(_ phrase: IGPhrase? = nil) {
         self.phrase = phrase
@@ -23,7 +23,10 @@ struct IGEditPhraseButton: View {
             selected: app.selectedPhrase,
             actionTitle: "Edit",
             systemImage: "pencil",
-            action: editPhrase
+            action: editPhrase,
+            isDisabled: { phrase in
+                phrase.isEditable == false
+            }
         )
     }
     

@@ -50,8 +50,8 @@ enum IHeartPhraseTheme: String, IGDesignTheme, RawRepresentable {
     }
     
     @MainActor var presetTags: Set<IGTag> {[
-        IGTag("\(heartColor.name.capitalized) Heart", scope: .theme, isPreset: true),
-        IGTag("\(textColor.name.capitalized) Text", scope: .theme, isPreset: true),
-        IGTag("\(textFont.displayName) Font", scope: .theme, isPreset: true)
+        IGTag("\(heartColor.name.lowercased()) heart", scope: .theme, isPreset: true),
+        IGTag("\(textColor.name.lowercased()) text", scope: .theme, isPreset: true),
+        IGTag("\(textFont.displayName.lowercased()) font", scope: .theme, isPreset: true)
     ]}
 }

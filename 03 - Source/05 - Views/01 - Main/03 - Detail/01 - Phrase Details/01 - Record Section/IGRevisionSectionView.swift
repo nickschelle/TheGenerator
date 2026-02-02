@@ -9,6 +9,9 @@ import SwiftUI
 
 struct IGRevisionSection: View {
     
+    @Environment(IGAppSettings.self) private var settings
+    @Environment(\.openWindow) private var openWindow
+    
     private let recordKey: IGRecordKey
     private let revisions: [IGRecord?]
     
@@ -19,6 +22,19 @@ struct IGRevisionSection: View {
     
     private var maxRevision: Int {
         revisions.count - 1
+    }
+    
+    private var currentRevision: Int {
+        revisions[maxRevision] != nil ? maxRevision : maxRevision - 1
+    }
+    
+    private var imageState: IGDesignSectionRow.ImageState {
+        if let latest = revisions[currentRevision] {
+            if (try? IGRecordManager.fileExistsfor(latest, at: settings.location)) ?? false {
+                return .available
+            }
+        }
+        return .missing
     }
     
     var body: some View {
@@ -33,8 +49,9 @@ struct IGRevisionSection: View {
         } label: {
             IGDesignSectionRow(
                 recordKey.displayValue(includeDesign: false),
-                revision: 1,
-                isNew: maxRevision == 0
+                revision: currentRevision,
+                imageState: imageState,
+                onAction: openImage
             )
         }
     }
@@ -44,6 +61,11 @@ struct IGRevisionSection: View {
         record: IGRecord?
     ) -> Bool {
         revision == maxRevision && record == nil
+    }
+    
+    private func openImage() {
+        guard let record = revisions[currentRevision] else { return }
+        openWindow(value: record.fileName)
     }
 }
 

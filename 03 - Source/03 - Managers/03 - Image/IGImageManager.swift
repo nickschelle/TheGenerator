@@ -459,6 +459,65 @@ enum IGImageManager {
         }
     }
     
+    @MainActor
+    static func loadPNG(
+        named fileName: String,
+        in folderURL: URL
+    ) async throws -> IGLoadedPNG {
+
+        guard folderURL.startAccessingSecurityScopedResource() else {
+            throw IGPNGLoadError.securityScopeDenied
+        }
+        defer { folderURL.stopAccessingSecurityScopedResource() }
+
+        let fileURL = folderURL
+            .appendingPathComponent(fileName)
+            .appendingPathExtension("png")
+
+        guard let image = NSImage(contentsOf: fileURL) else {
+            throw IGPNGLoadError.imageDecodeFailed
+        }
+
+        let metadata = try extractMetadata(from: fileURL)
+
+        return IGLoadedPNG(image: image, metadata: metadata)
+    }
+
+    nonisolated
+    private static func extractMetadata(
+        from url: URL
+    ) throws -> IGImageMetadata {
+
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else {
+            throw IGPNGLoadError.imageSourceFailed
+        }
+
+        guard
+            let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
+                as? [CFString: Any]
+        else {
+            throw IGPNGLoadError.propertiesMissing
+        }
+
+        let png = properties[kCGImagePropertyPNGDictionary] as? [CFString: Any]
+        let iptc = properties[kCGImagePropertyIPTCDictionary] as? [CFString: Any]
+
+        return IGImageMetadata(
+            title: png?[kCGImagePropertyPNGTitle] as? String ?? "",
+            detailDescription: png?[kCGImagePropertyPNGDescription] as? String ?? "",
+            author: png?[kCGImagePropertyPNGAuthor] as? String ?? "",
+            keywords: iptc?[kCGImagePropertyIPTCKeywords] as? [String] ?? [],
+            versionInfo: png?[kCGImagePropertyPNGSoftware] as? String ?? ""
+        )
+    }
+    
+}
+
+enum IGPNGLoadError: Error {
+    case securityScopeDenied
+    case imageDecodeFailed
+    case imageSourceFailed
+    case propertiesMissing
 }
 
 

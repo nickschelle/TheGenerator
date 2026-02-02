@@ -28,6 +28,14 @@ struct TheGeneratorApp: App {
             // fill in later
         }
         
+        WindowGroup("Image Inspector", id: "image-inspector", for: String.self) {
+            IGImageInspector($0)
+                .modelContainer(app.container)
+                .environment(app)
+                .environment(settings)
+        }
+        .windowResizability(.contentMinSize)
+        
         Settings {
             IGSettingsView()
                 .modelContainer(app.container)

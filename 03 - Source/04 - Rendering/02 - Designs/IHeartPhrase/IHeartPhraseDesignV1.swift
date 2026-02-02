@@ -17,9 +17,9 @@ enum IHeartPhraseDesignV1: IGDesign {
    
     static var presetTags: Set<IGTag> {
         [
-            IGTag("I ♥", scope: .design, isPreset: true),
-            IGTag("I Heart", scope: .design, isPreset: true),
-            IGTag("I Love", scope: .design, isPreset: true),
+            IGTag("i ♥", scope: .design, isPreset: true),
+            IGTag("i heart", scope: .design, isPreset: true),
+            IGTag("i love", scope: .design, isPreset: true),
         ]
     }
     

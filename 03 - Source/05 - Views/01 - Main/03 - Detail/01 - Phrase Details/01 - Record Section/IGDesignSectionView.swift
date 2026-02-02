@@ -40,8 +40,8 @@ struct IGDesignSection: View {
                         IGDesignSectionRow(
                             recordKey.displayValue(includeDesign: false),
                             revision: 0,
-                            isNew: true
-                        )
+                            imageState: .unrendered
+                        ) {}
                         .padding(4)
                     } else {
                         IGRevisionSection(revisions, for: recordKey)

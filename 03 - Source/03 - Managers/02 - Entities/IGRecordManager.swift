@@ -96,8 +96,20 @@ struct IGRecordManager {
             if let phrase = record.phrase { affectedPhrases.append(phrase) }
             context.delete(record)
         }
+    }
+    
+    static func fileExistsfor(_ record: IGRecord, at location: IGLocationConfig) throws -> Bool {
+        guard record.isLatestRevision else { return false }
         
-        //affectedPhrases.forEach{ clearCache(for: $0) }
+        guard let folderURL = location.startAccessing() else { return false }
+        
+        defer { location.stopAccessing() }
+        
+        let fileURL = folderURL
+            .appendingPathComponent(record.fileName)
+            .appendingPathExtension("png")
+        
+        return FileManager.default.fileExists(atPath: fileURL.path)
     }
     
     static func deleteRenderedImageFromDisk(_ record: IGRecord, at location: IGLocationConfig) throws {
