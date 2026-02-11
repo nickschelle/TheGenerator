@@ -29,6 +29,7 @@ struct MainView: View {
         }
         .onChange(of: settings.workspace.workspace) {
             app.selectedContents = [.allPhrases]
+            app.selectedDetails = []
             app.phraseToEdit = nil
             app.isAddingPhrase = false
         }

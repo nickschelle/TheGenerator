@@ -107,10 +107,10 @@ struct IGPhraseDetails: View {
     }
     
     private func syncThemeFromWorkspace() {
-        guard let rawTheme = settings.workspace.workspace.designKey?.defaultTheme.rawValue else {
+        guard let design = settings.workspace.workspace.designKey?.design else {
             return
         }
-        selectedTheme = rawTheme
+        selectedTheme = design.defaultTheme.rawValue
     }
     
     private func performRename() {

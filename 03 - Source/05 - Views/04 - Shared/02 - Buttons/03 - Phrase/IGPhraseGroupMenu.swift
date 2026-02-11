@@ -11,13 +11,20 @@ import SwiftData
 struct IGPhraseGroupMenu: View {
     
     @Environment(IGAppModel.self) private var app
-    
-    @Query(sort: [SortDescriptor(\IGGroup.name)]) private var groups: [IGGroup]
+    @Environment(IGAppSettings.self) private var settings
+    @Query(sort: [SortDescriptor(\IGGroup.name)]) private var allGroups: [IGGroup]
     
     private let phrase: IGPhrase?
     
     init(_ phrase: IGPhrase? = nil) {
         self.phrase = phrase
+    }
+    
+    private var groups: [IGGroup] {
+        guard let designKey = settings.workspace.workspace.designKey else {
+            return allGroups
+        }
+        return allGroups.filter { $0.designLinks.contains { $0.designKey ==  designKey}}
     }
     
     private var selection: Set<IGPhrase> {
@@ -26,12 +33,16 @@ struct IGPhraseGroupMenu: View {
     }
     
     var body: some View {
-        Menu("Groups", systemImage: "rectangle.stack") {
-            ForEach(groups) { group in
-                let status: IGMatchStatus = IGMatchStatus.evaluate(selection: selection, in: group.phrases)
-                Button(group.name, systemImage: status.systemImage) {
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        updateSelected(status, with: group)
+        if selection.isEmpty {
+            Button("Groups", systemImage: "rectangle.stack", action: {}).disabled(true)
+        } else {
+            Menu("Groups", systemImage: "rectangle.stack") {
+                ForEach(groups) { group in
+                    let status: IGMatchStatus = IGMatchStatus.evaluate(selection: selection, in: group.phrases)
+                    Button(group.name, systemImage: status.systemImage) {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            updateSelected(status, with: group)
+                        }
                     }
                 }
             }

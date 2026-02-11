@@ -32,6 +32,6 @@ struct IGWorkspaceMenu: View {
     
     @Previewable @State var settings: IGAppSettings = .init()
     
-    IGPhraseGroupMenu()
+    IGWorkspaceMenu()
         .environment(settings)
 }

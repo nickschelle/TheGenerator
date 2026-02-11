@@ -36,11 +36,6 @@ extension IGDesign where Theme: CaseIterable {
 }
 
 extension IGDesign {
-    
-    static var defaultTheme: Theme {
-        Theme.defaultTheme
-    }
-    
     static var id: String {
         "\(baseName.capitalizedInitials)-\(String(format: "%03d", designVersion))"
     }

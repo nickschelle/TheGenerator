@@ -14,6 +14,7 @@ enum IHeartPhraseDesignV1: IGDesign {
     
     static let baseName: String = "I ♥ Phrase"
     static let designVersion: Int = 1
+    static let defaultTheme: Theme = IHeartPhraseTheme.defaultTheme
    
     static var presetTags: Set<IGTag> {
         [

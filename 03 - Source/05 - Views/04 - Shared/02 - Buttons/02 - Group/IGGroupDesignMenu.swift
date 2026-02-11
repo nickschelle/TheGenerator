@@ -28,20 +28,23 @@ struct IGGroupDesignMenu: View {
     }
     
     var body: some View {
-        Menu("Designs", systemImage: "rectangle.3.group") {
-            ForEach(designs) { designKey in
-                let groupsWithDesign: [IGGroup] = selection.filter { group in
-                    group.designLinks.contains { link in
-                        link.designKey == designKey
+        if selection.isEmpty {
+            Button("Designs", systemImage: "rectangle.3.group", action: {}).disabled(true)
+        } else {
+            Menu("Designs", systemImage: "rectangle.3.group") {
+                ForEach(designs) { designKey in
+                    let groupsWithDesign: [IGGroup] = selection.filter { group in
+                        group.designLinks.contains { link in
+                            link.designKey == designKey
+                        }
+                    }
+                    let status: IGMatchStatus = IGMatchStatus.evaluate(selection: selection, in: groupsWithDesign)
+                    Button(designKey.displayName, systemImage: status.systemImage) {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            updateSelected(status, with: designKey)
+                        }
                     }
                 }
-                let status: IGMatchStatus = IGMatchStatus.evaluate(selection: selection, in: groupsWithDesign)
-                Button(designKey.displayName, systemImage: status.systemImage) {
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        updateSelected(status, with: designKey)
-                    }
-                }
-               
             }
         }
     }
