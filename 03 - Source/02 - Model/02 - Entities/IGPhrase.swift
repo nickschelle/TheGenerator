@@ -55,4 +55,6 @@ extension IGPhrase: IGTaggable {
 
 extension IGPhrase: IGDateStampable {}
 
-extension IGPhrase: IGNormalizableString {}
+extension IGPhrase: IGNormalizableString {
+    static var allowedSpecialCharacters: Set<Character> { ["♥︎", "♥", ".", "'", "#", ":", "\"", "?"] }
+}
