@@ -11,6 +11,7 @@ import SwiftData
 struct IGPasteButton: View {
     
     @Environment(IGAppModel.self) private var app
+    @Environment(IGAppSettings.self) private var settings
     @State private var content: [String] = []
     @State private var isShowingPastedAlert: Bool = false
     
@@ -56,6 +57,10 @@ struct IGPasteButton: View {
 
             if !groups.isEmpty {
                 IGGroupManager.add(phrases, to: groups, in: app.context)
+            }
+            
+            if let key = settings.workspace.workspace.designKey {
+                key.connect(phrases, in: app.context)
             }
 
             try app.context.save()
